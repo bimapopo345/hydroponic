@@ -1,46 +1,16 @@
 {
-  "name": "My new app",
+  "name": "fishtech-v2",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "client": "vite",
-    "server": "nodemon server.js",
-    "build": "tsc && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.17",
-    "@types/react-router-dom": "^5.3.3",
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.3",
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "framer-motion": "^11.13.1",
-    "lucide-react": "^0.453.0",
-    "mongoose": "^8.9.4",
-    "node": "^22.13.0",
-    "nodemailer": "^6.9.9",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-intersection-observer": "^9.13.1",
-    "react-router-dom": "^7.1.1",
-    "recharts": "^2.14.1"
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build"
   },
   "devDependencies": {
-    "@types/react": "^18.3.6",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.4.20",
-    "concurrently": "^8.2.2",
-    "globals": "^15.9.0",
-    "nodemon": "^3.0.3",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.14",
-    "typescript": "^5.5.3",
-    "vite": "^5.4.6"
+    "concurrently": "^8.2.2"
   }
 }

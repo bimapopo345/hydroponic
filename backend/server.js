@@ -25,7 +25,17 @@ const transporter = nodemailer.createTransport({
 });
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://fishtech-v2.vercel.app" // Production frontend URL
+        : "http://localhost:5173", // Development frontend URL
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(bodyParser.json());
 
 // Connect to MongoDB
@@ -271,7 +281,11 @@ app.post("/forgot-password", async (req, res) => {
     await user.save();
 
     // Send reset email
-    const resetUrl = `http://localhost:5173/reset-password/${token}`;
+    const resetUrl = `${
+      process.env.NODE_ENV === "production"
+        ? "https://fishtech-v2.vercel.app"
+        : "http://localhost:5173"
+    }/reset-password/${token}`;
     const mailOptions = {
       from: "bimapopo345@gmail.com",
       to: user.email,
