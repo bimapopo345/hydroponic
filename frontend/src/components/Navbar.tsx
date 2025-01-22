@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Fish } from "lucide-react";
+import { Menu, X, Sprout } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const landingPageNavigation = [
   { name: "Home", href: "#home" },
   { name: "Features", href: "#features" },
   { name: "Benefits", href: "#benefits" },
-  { name: "Water Stats", href: "#water-stats" },
+  { name: "Stats", href: "#water-stats" },
   { name: "Testimonials", href: "#testimonials" },
   { name: "Pricing", href: "#pricing" },
   { name: "Contact", href: "#contact" },
@@ -55,12 +55,11 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <div
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <Fish
+            <Sprout
               className={`h-8 w-8 ${scrolled ? "text-teal-600" : "text-white"}`}
             />
             <span
@@ -68,30 +67,26 @@ export default function Navbar() {
                 scrolled ? "text-gray-900" : "text-white"
               }`}
             >
-              GrowFeed
+              HidroNutrient
             </span>
           </div>
 
-          {/* Desktop menu */}
           <div className="hidden md:flex items-center gap-6">
-            {isLandingPage ? (
-              <>
-                {landingPageNavigation.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => scrollToSection(item.href)}
-                    className={`${
-                      scrolled
-                        ? "text-gray-600 hover:text-teal-600"
-                        : "text-gray-100 hover:text-white"
-                    } transition-colors relative group`}
-                  >
-                    {item.name}
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-500 group-hover:w-full transition-all duration-300"></span>
-                  </button>
-                ))}
-              </>
-            ) : null}
+            {isLandingPage &&
+              landingPageNavigation.map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => scrollToSection(item.href)}
+                  className={`${
+                    scrolled
+                      ? "text-gray-600 hover:text-teal-600"
+                      : "text-gray-100 hover:text-white"
+                  } transition-colors relative group`}
+                >
+                  {item.name}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-500 group-hover:w-full transition-all duration-300"></span>
+                </button>
+              ))}
 
             {!location.pathname.includes("/dashboard") && (
               <>
@@ -115,7 +110,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -132,7 +126,6 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 space-y-2 bg-white rounded-lg shadow-xl mt-2">
             {isLandingPage &&

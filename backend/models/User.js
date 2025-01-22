@@ -1,23 +1,24 @@
 import mongoose from "mongoose";
 
-const waterStatsSchema = new mongoose.Schema({
-  ph: { type: Number, default: 7.0 },
-  temperature: { type: Number, default: 25.0 },
-  oxygen: { type: Number, default: 8.0 },
-  turbidity: { type: Number, default: 5.0 },
+// Schema for nutrient solution stats: TDS, EC, Temperature, pH
+const nutrientStatsSchema = new mongoose.Schema({
+  tds: { type: Number, default: 300 }, // in ppm
+  ec: { type: Number, default: 800 }, // in us/cm
+  temperature: { type: Number, default: 25.0 }, // in °C
+  ph: { type: Number, default: 6.0 },
 });
 
 const historyEntrySchema = new mongoose.Schema({
   time: { type: String, required: true },
-  ph: { type: Number, required: true },
+  tds: { type: Number, required: true },
+  ec: { type: Number, required: true },
   temperature: { type: Number, required: true },
-  oxygen: { type: Number, required: true },
-  turbidity: { type: Number, required: true },
+  ph: { type: Number, required: true },
 });
 
 const dashboardDataSchema = new mongoose.Schema({
   lastLogin: { type: Date, default: Date.now },
-  stats: { type: waterStatsSchema, default: () => ({}) },
+  stats: { type: nutrientStatsSchema, default: () => ({}) },
   history: { type: [historyEntrySchema], default: [] },
 });
 
@@ -58,20 +59,7 @@ const UserSchema = new mongoose.Schema({
   },
   profile: {
     type: profileSchema,
-    default: () => ({
-      fullName: "",
-      avatar: "",
-      bio: "",
-      phone: "",
-      address: "",
-      company: "",
-      position: "",
-      socialLinks: {
-        facebook: "",
-        twitter: "",
-        linkedin: "",
-      },
-    }),
+    default: () => ({}),
   },
   resetPasswordToken: {
     type: String,
@@ -86,17 +74,17 @@ const UserSchema = new mongoose.Schema({
     default: () => ({
       lastLogin: new Date(),
       stats: {
-        ph: 7.0,
+        tds: 300,
+        ec: 800,
         temperature: 25.0,
-        oxygen: 8.0,
-        turbidity: 5.0,
+        ph: 6.0,
       },
       history: Array.from({ length: 24 }, (_, i) => ({
         time: `${i}:00`,
-        ph: Number((Math.random() * (7.5 - 6.5) + 6.5).toFixed(1)),
-        temperature: Number((Math.random() * (27 - 23) + 23).toFixed(1)),
-        oxygen: Number((Math.random() * (9 - 7) + 7).toFixed(1)),
-        turbidity: Number((Math.random() * (6 - 4) + 4).toFixed(1)),
+        tds: 300 + Math.floor(Math.random() * 200),
+        ec: 800 + Math.floor(Math.random() * 300),
+        temperature: Number((Math.random() * (28 - 20) + 20).toFixed(1)),
+        ph: Number((Math.random() * (6.8 - 5.5) + 5.5).toFixed(1)),
       })),
     }),
   },
@@ -116,7 +104,7 @@ UserSchema.pre("save", function (next) {
   next();
 });
 
-// Ensure profile and dashboardData are properly initialized
+// Initialize profile and dashboardData if missing
 UserSchema.pre("save", function (next) {
   if (!this.profile) {
     this.profile = this.schema.path("profile").default();

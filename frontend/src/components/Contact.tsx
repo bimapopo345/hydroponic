@@ -1,5 +1,5 @@
-import { Mail, Phone, MapPin } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { Mail, Phone, MapPin } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface Message {
   name: string;
@@ -11,59 +11,57 @@ interface Message {
 
 export default function Contact() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
+    name: "",
+    email: "",
+    message: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get selected plan from localStorage when component mounts
-    const plan = localStorage.getItem('selectedPlan');
+    const plan = localStorage.getItem("selectedPlan");
     setSelectedPlan(plan);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Get existing messages from localStorage
-    const existingMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
-    
-    // Create new message
+
+    const existingMessages = JSON.parse(
+      localStorage.getItem("contactMessages") || "[]"
+    );
+
     const newMessage: Message = {
       ...formData,
       date: new Date().toISOString(),
-      plan: selectedPlan || undefined
+      plan: selectedPlan || undefined,
     };
-    
-    // Save to localStorage
-    localStorage.setItem('contactMessages', JSON.stringify([...existingMessages, newMessage]));
-    
-    // Show success state
+
+    localStorage.setItem(
+      "contactMessages",
+      JSON.stringify([...existingMessages, newMessage])
+    );
+
     setSubmitted(true);
-    
-    // Reset form
     setFormData({
-      name: '',
-      email: '',
-      message: ''
+      name: "",
+      email: "",
+      message: "",
     });
 
-    // Clear selected plan from localStorage
-    localStorage.removeItem('selectedPlan');
+    localStorage.removeItem("selectedPlan");
     setSelectedPlan(null);
 
-    // Reset success message after 3 seconds
     setTimeout(() => {
       setSubmitted(false);
     }, 3000);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -71,11 +69,13 @@ export default function Contact() {
     <div id="contact" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Get In Touch</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Get In Touch
+          </h2>
           <p className="text-xl text-gray-600">
-            {selectedPlan 
-              ? `Complete your ${selectedPlan} plan registration`
-              : "Learn more about GrowFeed smart feeding solutions"}
+            {selectedPlan
+              ? `Complete your ${selectedPlan} plan inquiry`
+              : "Learn more about HidroNutrient solutions"}
           </p>
         </div>
 
@@ -85,7 +85,7 @@ export default function Contact() {
               <Mail className="w-6 h-6 text-blue-600" />
               <div>
                 <h3 className="font-semibold">Email Us</h3>
-                <p className="text-gray-600">info@growfeed.tech</p>
+                <p className="text-gray-600">info@hidro-nutrient.tech</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -106,17 +106,24 @@ export default function Contact() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {submitted && (
-              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <span className="block sm:inline">Message sent successfully!</span>
+              <div
+                className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+                role="alert"
+              >
+                <span className="block sm:inline">
+                  Message sent successfully!
+                </span>
               </div>
             )}
-            
+
             {selectedPlan && (
               <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded relative">
-                <span className="block sm:inline">Selected plan: {selectedPlan}</span>
+                <span className="block sm:inline">
+                  Selected plan: {selectedPlan}
+                </span>
               </div>
             )}
-            
+
             <input
               type="text"
               name="name"
@@ -139,23 +146,24 @@ export default function Contact() {
               name="message"
               value={formData.message}
               onChange={handleChange}
-              placeholder={selectedPlan 
-                ? "Tell us about your fish farm and specific requirements..."
-                : "Your Message"
+              placeholder={
+                selectedPlan
+                  ? "Tell us about your hydroponic system and requirements..."
+                  : "Your Message"
               }
               required
               rows={4}
               className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
             ></textarea>
-            <button 
+            <button
               type="submit"
               className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
-              {selectedPlan ? 'Complete Registration' : 'Send Message'}
+              {selectedPlan ? "Complete Inquiry" : "Send Message"}
             </button>
           </form>
         </div>
       </div>
     </div>
-  )
+  );
 }

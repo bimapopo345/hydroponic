@@ -1,55 +1,60 @@
 import {
-  Wifi,
+  Droplets,
   Thermometer,
-  Timer,
-  Scale,
-  Database,
-  Gauge,
-  Settings,
-  Smartphone,
+  Wand2,
+  LayoutGrid,
+  BatteryCharging,
+  AlertTriangle,
+  Leaf,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
 const features = [
   {
-    icon: <Settings className="w-8 h-8" />,
-    title: "Arduino Control",
-    description: "Central control system with Arduino UNO and WiFi ESP module",
-  },
-  {
-    icon: <Scale className="w-8 h-8" />,
-    title: "Precise Feeding",
-    description: "HX711 and Load Cell for accurate feed measurement",
+    icon: <Droplets className="w-8 h-8" />,
+    title: "TDS & EC Sensors",
+    description:
+      "Accurate TDS and EC measurement for nutrient solution consistency.",
   },
   {
     icon: <Thermometer className="w-8 h-8" />,
-    title: "Environment Monitoring",
-    description: "Temperature and pH sensors for optimal water conditions",
+    title: "Temperature Monitoring",
+    description:
+      "Keep root-zone temperatures at optimal levels for plant growth.",
   },
   {
-    icon: <Timer className="w-8 h-8" />,
-    title: "Automated Timing",
-    description: "Scheduled feeding with precise servo control",
+    icon: <Leaf className="w-8 h-8" />,
+    title: "pH Adjustment",
+    description: "Automated pH balancing to prevent nutrient lockout.",
   },
   {
-    icon: <Database className="w-8 h-8" />,
-    title: "Fuzzy Logic",
-    description: "Smart feed adjustment based on environmental conditions",
+    icon: <Wand2 className="w-8 h-8" />,
+    title: "Automated Control",
+    description:
+      "Real-time nutrient dosing and solution cycling using IoT devices.",
   },
   {
-    icon: <Smartphone className="w-8 h-8" />,
-    title: "Mobile Control",
-    description: "Real-time monitoring via Blynk mobile application",
+    icon: <LayoutGrid className="w-8 h-8" />,
+    title: "Historical Data",
+    description:
+      "Access logs and graphs of your hydroponic system's performance.",
   },
   {
-    icon: <Gauge className="w-8 h-8" />,
-    title: "LCD Display",
-    description: "On-site display for instant system status",
+    icon: <AlertTriangle className="w-8 h-8" />,
+    title: "Alert System",
+    description:
+      "Receive instant alerts if sensor values exceed safe thresholds.",
   },
   {
-    icon: <Wifi className="w-8 h-8" />,
-    title: "IoT Integration",
-    description: "Complete wireless control and monitoring",
+    icon: <BatteryCharging className="w-8 h-8" />,
+    title: "Energy Efficiency",
+    description:
+      "Smart scheduling reduces power consumption for pumps and sensors.",
+  },
+  {
+    icon: <Leaf className="w-8 h-8" />,
+    title: "Mobile Access",
+    description: "Monitor and adjust settings from your smartphone or tablet.",
   },
 ];
 
@@ -62,10 +67,9 @@ export default function Features() {
             System Components
           </h2>
           <p className="text-xl text-gray-600">
-            Advanced technology for intelligent fish feeding
+            Modern technology for precise hydroponic monitoring
           </p>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <motion.div

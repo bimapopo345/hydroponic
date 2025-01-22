@@ -3,25 +3,25 @@ import { motion } from "framer-motion";
 
 const testimonials = [
   {
-    name: "John Smith",
-    role: "Fish Farm Owner",
-    image: "https://randomuser.me/api/portraits/men/1.jpg",
+    name: "Anna Widjaja",
+    role: "Home Grower",
+    image: "https://randomuser.me/api/portraits/women/12.jpg",
     content:
-      "GrowFeed has transformed our operations. We've seen a 40% increase in efficiency and significant cost savings.",
+      "HidroNutrient helped me fine-tune the nutrient solution for my lettuce. They grow faster and taste better!",
   },
   {
-    name: "Maria Garcia",
-    role: "Aquaculture Specialist",
-    image: "https://randomuser.me/api/portraits/women/2.jpg",
-    content:
-      "The smart monitoring system is incredible. It's like having an expert watching over your fish 24/7.",
-  },
-  {
-    name: "David Chen",
+    name: "Rahul Verma",
     role: "Commercial Farm Manager",
-    image: "https://randomuser.me/api/portraits/men/3.jpg",
+    image: "https://randomuser.me/api/portraits/men/13.jpg",
     content:
-      "Implementation was smooth and the results were immediate. Our fish health has never been better.",
+      "Our yields increased by 30% after installing their automated monitoring system. We can’t go back now!",
+  },
+  {
+    name: "Luciana Perez",
+    role: "Hydroponic Consultant",
+    image: "https://randomuser.me/api/portraits/women/14.jpg",
+    content:
+      "Real-time TDS and pH tracking is a game-changer. It’s user-friendly and saves tons of labor hours.",
   },
 ];
 
@@ -34,7 +34,7 @@ export default function Testimonials() {
             What Our Clients Say
           </h2>
           <p className="text-xl text-gray-600">
-            Success stories from fish farms worldwide
+            Success stories from hydroponic enthusiasts worldwide
           </p>
         </div>
 

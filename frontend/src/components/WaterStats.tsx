@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Droplets, Thermometer, Activity, Filter, Clock } from "lucide-react";
+import { Droplets, Thermometer, Ruler, Flower2, Clock } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -12,6 +12,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+type UpdateInterval = "second" | "minute" | "hour" | "day";
+
+const intervalOptions = [
+  { value: "second" as UpdateInterval, label: "Every Second", ms: 1000 },
+  { value: "minute" as UpdateInterval, label: "Every Minute", ms: 60000 },
+  { value: "hour" as UpdateInterval, label: "Hourly", ms: 3600000 },
+  { value: "day" as UpdateInterval, label: "Daily", ms: 86400000 },
+];
+
 interface StatCardProps {
   title: string;
   value: string;
@@ -21,89 +30,73 @@ interface StatCardProps {
   change: number;
 }
 
-type UpdateInterval = "second" | "minute" | "hour" | "day";
+function StatCard({ title, value, unit, icon, color, change }: StatCardProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`bg-white p-6 rounded-xl shadow-lg border-l-4 ${color}`}
+    >
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <p className="text-gray-500 text-sm">{title}</p>
+          <h3 className="text-2xl font-bold">
+            {value}
+            <span className="text-gray-500 text-lg ml-1">{unit}</span>
+          </h3>
+        </div>
+        <div
+          className={`p-2 rounded-lg ${color
+            .replace("border-l", "bg")
+            .replace("-500", "-100")}`}
+        >
+          {icon}
+        </div>
+      </div>
+      <div className="flex items-center">
+        <span
+          className={`text-sm ${
+            change >= 0 ? "text-green-500" : "text-red-500"
+          }`}
+        >
+          {change >= 0 ? "↑" : "↓"} {Math.abs(change)}%
+        </span>
+        <span className="text-gray-500 text-sm ml-2">vs last update</span>
+      </div>
+    </motion.div>
+  );
+}
 
-// Generate random data within acceptable ranges
-const generateRandomValue = (min: number, max: number) => {
-  return Number((Math.random() * (max - min) + min).toFixed(1));
-};
+// Generate random stats
+function randomTDS() {
+  return Number((Math.random() * (900 - 200) + 200).toFixed(1));
+}
+function randomEC() {
+  return Number((Math.random() * (1500 - 500) + 500).toFixed(1));
+}
+function randomTemperature() {
+  return Number((Math.random() * (30 - 20) + 20).toFixed(1));
+}
+function randomPH() {
+  return Number((Math.random() * (7 - 5.5) + 5.5).toFixed(1));
+}
+function randomChange() {
+  return Number((Math.random() * 4 - 2).toFixed(1)); // -2% to +2%
+}
 
-const getRandomChange = () => {
-  return Number((Math.random() * 4 - 2).toFixed(1)); // Random change between -2 and 2
-};
-
-// Generate historical data with more randomization
-const generateHistoricalData = () => {
+// Generate some initial data for the chart
+function generateInitialData() {
   const data = [];
   for (let i = 23; i >= 0; i--) {
     data.push({
       time: `${i}:00`,
-      ph: generateRandomValue(6.5, 7.5),
-      temperature: generateRandomValue(23, 27),
-      oxygen: generateRandomValue(7, 9),
-      turbidity: generateRandomValue(4, 6),
+      tds: randomTDS(),
+      ec: randomEC(),
+      temperature: randomTemperature(),
+      ph: randomPH(),
     });
   }
   return data;
-};
-
-const StatCard = ({
-  title,
-  value,
-  unit,
-  icon,
-  color,
-  change,
-}: StatCardProps) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className={`bg-white p-6 rounded-xl shadow-lg border-l-4 ${color}`}
-  >
-    <div className="flex justify-between items-start mb-4">
-      <div>
-        <p className="text-gray-500 text-sm">{title}</p>
-        <h3 className="text-2xl font-bold">
-          {value}
-          <span className="text-gray-500 text-lg ml-1">{unit}</span>
-        </h3>
-      </div>
-      <div
-        className={`p-2 rounded-lg ${color
-          .replace("border-l", "bg")
-          .replace("-500", "-100")}`}
-      >
-        {icon}
-      </div>
-    </div>
-    <div className="flex items-center">
-      <span
-        className={`text-sm ${change >= 0 ? "text-green-500" : "text-red-500"}`}
-      >
-        {change >= 0 ? "↑" : "↓"} {Math.abs(change)}%
-      </span>
-      <span className="text-gray-500 text-sm ml-2">vs last update</span>
-    </div>
-  </motion.div>
-);
-
-const intervalOptions = [
-  { value: "second" as UpdateInterval, label: "Every Second", ms: 1000 },
-  { value: "minute" as UpdateInterval, label: "Every Minute", ms: 60000 },
-  { value: "hour" as UpdateInterval, label: "Hourly", ms: 3600000 },
-  { value: "day" as UpdateInterval, label: "Daily", ms: 86400000 },
-];
-
-interface Stat {
-  value: number;
-  change: number;
-}
-
-interface Stats {
-  ph: Stat;
-  temperature: Stat;
-  oxygen: Stat;
-  turbidity: Stat;
 }
 
 export default function WaterStats() {
@@ -111,90 +104,82 @@ export default function WaterStats() {
     useState<UpdateInterval>("second");
   const [isUpdating, setIsUpdating] = useState(true);
 
-  const [stats, setStats] = useState<Stats>({
-    ph: { value: 7.0, change: 0 },
-    temperature: { value: 25.0, change: 0 },
-    oxygen: { value: 8.0, change: 0 },
-    turbidity: { value: 5.0, change: 0 },
-  });
+  const [tds, setTDS] = useState(randomTDS());
+  const [ec, setEC] = useState(randomEC());
+  const [temperature, setTemperature] = useState(randomTemperature());
+  const [ph, setPH] = useState(randomPH());
 
-  const [historicalData, setHistoricalData] = useState(
-    generateHistoricalData()
-  );
+  const [tdsChange, setTDSChange] = useState(0);
+  const [ecChange, setECChange] = useState(0);
+  const [tempChange, setTempChange] = useState(0);
+  const [phChange, setPHChange] = useState(0);
+
+  const [chartData, setChartData] = useState(generateInitialData());
 
   const updateStats = () => {
-    const newStats = {
-      ph: {
-        value: generateRandomValue(6.5, 7.5),
-        change: getRandomChange(),
-      },
-      temperature: {
-        value: generateRandomValue(23, 27),
-        change: getRandomChange(),
-      },
-      oxygen: {
-        value: generateRandomValue(7, 9),
-        change: getRandomChange(),
-      },
-      turbidity: {
-        value: generateRandomValue(4, 6),
-        change: getRandomChange(),
-      },
-    };
+    const newTDS = randomTDS();
+    const newEC = randomEC();
+    const newTemp = randomTemperature();
+    const newPH = randomPH();
 
-    setStats(newStats);
+    setTDSChange(((newTDS - tds) / tds) * 100);
+    setECChange(((newEC - ec) / ec) * 100);
+    setTempChange(((newTemp - temperature) / temperature) * 100);
+    setPHChange(((newPH - ph) / ph) * 100);
 
-    setHistoricalData((currentData) => [
-      ...currentData.slice(1),
-      {
-        time: new Date().toLocaleTimeString(),
-        ph: newStats.ph.value,
-        temperature: newStats.temperature.value,
-        oxygen: newStats.oxygen.value,
-        turbidity: newStats.turbidity.value,
-      },
-    ]);
+    setTDS(newTDS);
+    setEC(newEC);
+    setTemperature(newTemp);
+    setPH(newPH);
+
+    // Update chart data
+    setChartData((prev) => {
+      const updated = [
+        ...prev.slice(1),
+        {
+          time: new Date().toLocaleTimeString(),
+          tds: newTDS,
+          ec: newEC,
+          temperature: newTemp,
+          ph: newPH,
+        },
+      ];
+      return updated;
+    });
   };
 
   useEffect(() => {
     let intervalId: number | null = null;
 
     if (isUpdating) {
-      const currentInterval = intervalOptions.find(
+      const selectedInterval = intervalOptions.find(
         (opt) => opt.value === updateInterval
       );
-      if (currentInterval) {
-        // Clear any existing interval before setting a new one
-        if (intervalId) {
-          clearInterval(intervalId);
-        }
-
-        // Set new interval with the correct timing
-        intervalId = window.setInterval(updateStats, currentInterval.ms);
+      if (selectedInterval) {
+        intervalId = window.setInterval(updateStats, selectedInterval.ms);
       }
     }
 
-    // Cleanup function to clear interval when component unmounts or dependencies change
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
       }
     };
-  }, [updateInterval, isUpdating]); // Dependencies array includes both updateInterval and isUpdating
-
-  const handleIntervalChange = (newInterval: UpdateInterval) => {
-    setUpdateInterval(newInterval);
-  };
-
-  const handleUpdateToggle = () => {
-    setIsUpdating(!isUpdating);
-  };
+  }, [updateInterval, isUpdating, tds, ec, temperature, ph]);
 
   const getUpdateText = () => {
     const intervalOption = intervalOptions.find(
       (opt) => opt.value === updateInterval
     );
     return intervalOption?.label.toLowerCase() || "every second";
+  };
+
+  const handleIntervalChange = (value: UpdateInterval) => {
+    setUpdateInterval(value);
+  };
+
+  const handleUpdateToggle = () => {
+    setIsUpdating(!isUpdating);
   };
 
   return (
@@ -205,14 +190,13 @@ export default function WaterStats() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Water Quality Dashboard
+            Nutrient Solution Dashboard
           </h2>
           <p className="text-xl text-gray-600">
-            Real-time monitoring of key water parameters
+            Real-time monitoring of TDS, EC, pH, and temperature
           </p>
         </div>
 
-        {/* Update Interval Controls */}
         <div className="mb-8 flex flex-wrap items-center justify-center gap-4">
           <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-md">
             <Clock className="w-5 h-5 text-gray-500" />
@@ -243,47 +227,46 @@ export default function WaterStats() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
-            title="pH Level"
-            value={stats.ph.value.toString()}
-            unit="pH"
+            title="TDS"
+            value={tds.toString()}
+            unit="ppm"
             icon={<Droplets className="w-6 h-6 text-blue-500" />}
             color="border-l-blue-500"
-            change={stats.ph.change}
+            change={tdsChange}
+          />
+          <StatCard
+            title="EC"
+            value={ec.toString()}
+            unit="µS/cm"
+            icon={<Ruler className="w-6 h-6 text-orange-500" />}
+            color="border-l-orange-500"
+            change={ecChange}
           />
           <StatCard
             title="Temperature"
-            value={stats.temperature.value.toString()}
+            value={temperature.toString()}
             unit="°C"
             icon={<Thermometer className="w-6 h-6 text-red-500" />}
             color="border-l-red-500"
-            change={stats.temperature.change}
+            change={tempChange}
           />
           <StatCard
-            title="Dissolved Oxygen"
-            value={stats.oxygen.value.toString()}
-            unit="mg/L"
-            icon={<Activity className="w-6 h-6 text-green-500" />}
+            title="pH"
+            value={ph.toString()}
+            unit=""
+            icon={<Flower2 className="w-6 h-6 text-green-500" />}
             color="border-l-green-500"
-            change={stats.oxygen.change}
-          />
-          <StatCard
-            title="Turbidity"
-            value={stats.turbidity.value.toString()}
-            unit="NTU"
-            icon={<Filter className="w-6 h-6 text-amber-500" />}
-            color="border-l-amber-500"
-            change={stats.turbidity.change}
+            change={phChange}
           />
         </div>
 
-        {/* Historical Data Charts */}
         <div className="mt-12 bg-white p-6 rounded-xl shadow-lg">
           <h3 className="text-2xl font-bold text-gray-900 mb-6">
             Historical Data
           </h3>
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={historicalData}>
+              <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
                 <YAxis />
@@ -291,9 +274,16 @@ export default function WaterStats() {
                 <Legend />
                 <Line
                   type="monotone"
-                  dataKey="ph"
+                  dataKey="tds"
                   stroke="#3B82F6"
-                  name="pH Level"
+                  name="TDS (ppm)"
+                  strokeWidth={2}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="ec"
+                  stroke="#F97316"
+                  name="EC (µS/cm)"
                   strokeWidth={2}
                 />
                 <Line
@@ -305,16 +295,9 @@ export default function WaterStats() {
                 />
                 <Line
                   type="monotone"
-                  dataKey="oxygen"
+                  dataKey="ph"
                   stroke="#10B981"
-                  name="Dissolved Oxygen (mg/L)"
-                  strokeWidth={2}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="turbidity"
-                  stroke="#F59E0B"
-                  name="Turbidity (NTU)"
+                  name="pH"
                   strokeWidth={2}
                 />
               </LineChart>

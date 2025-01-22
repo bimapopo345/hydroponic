@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Fish, Waves } from "lucide-react";
+import { Sprout, Waves } from "lucide-react";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -59,7 +59,7 @@ const Register = () => {
             }}
             className="absolute top-12 left-0"
           >
-            <Fish size={40} className="text-white" />
+            <Sprout size={40} className="text-white" />
           </motion.div>
           <motion.div
             animate={{
@@ -72,18 +72,12 @@ const Register = () => {
             }}
             className="absolute top-24 left-0"
           >
-            <Fish size={30} className="text-white opacity-70" />
+            <Sprout size={30} className="text-white opacity-70" />
           </motion.div>
           <div className="absolute bottom-0 w-full">
             <motion.div
-              animate={{
-                y: [0, -5, 0],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
               <Waves className="w-full text-white opacity-30" />
             </motion.div>

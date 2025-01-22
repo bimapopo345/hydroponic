@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  Fish,
   User,
   LogOut,
   Camera,
@@ -10,6 +9,7 @@ import {
   Linkedin,
   Save,
   X,
+  Sprout,
 } from "lucide-react";
 import WaterStats from "./WaterStats";
 
@@ -28,16 +28,19 @@ interface Profile {
   };
 }
 
-interface DashboardData {
+interface DashboardProps {
   username: string;
   email: string;
   profile: Profile;
-  lastLogin: string;
-  stats: {
-    ph: number;
-    temperature: number;
-    oxygen: number;
-    turbidity: number;
+  dashboardData: {
+    lastLogin: string;
+    stats: {
+      tds: number;
+      ec: number;
+      temperature: number;
+      ph: number;
+    };
+    history: any[];
   };
 }
 
@@ -57,7 +60,7 @@ const defaultProfile: Profile = {
 };
 
 const Dashboard = () => {
-  const [userData, setUserData] = useState<DashboardData | null>(null);
+  const [userData, setUserData] = useState<DashboardProps | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState<Profile>(defaultProfile);
@@ -178,18 +181,12 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-cyan-50 flex items-center justify-center">
         <div className="text-center">
           <motion.div
-            animate={{
-              rotate: 360,
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "linear",
-            }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           >
-            <Fish size={48} className="text-blue-500" />
+            <Sprout size={48} className="text-blue-500" />
           </motion.div>
-          <p className="mt-4 text-gray-600">Loading your aquarium data...</p>
+          <p className="mt-4 text-gray-600">Loading your hydroponic data...</p>
         </div>
       </div>
     );
@@ -213,14 +210,13 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-cyan-50">
-      {/* Navigation Bar */}
       <nav className="bg-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Fish className="h-8 w-8 text-blue-500" />
+              <Sprout className="h-8 w-8 text-green-500" />
               <span className="ml-2 text-xl font-semibold text-gray-800">
-                GrowFeed
+                HidroNutrient
               </span>
             </div>
             <div className="flex items-center space-x-4">
@@ -241,7 +237,6 @@ const Dashboard = () => {
       </nav>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Profile Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -270,7 +265,6 @@ const Dashboard = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Avatar Section */}
             <div className="text-center">
               <div className="relative inline-block">
                 <img
@@ -298,7 +292,6 @@ const Dashboard = () => {
               <p className="text-gray-600">{userData.email}</p>
             </div>
 
-            {/* Profile Details */}
             <div className="md:col-span-2 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -415,7 +408,6 @@ const Dashboard = () => {
                   )}
                 </div>
 
-                {/* Social Links */}
                 <div className="md:col-span-2">
                   <h4 className="text-lg font-medium text-gray-700 mb-4">
                     Social Links
@@ -432,15 +424,17 @@ const Dashboard = () => {
                           placeholder="Facebook URL"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
-                      ) : (
+                      ) : editedProfile.socialLinks.facebook ? (
                         <a
                           href={editedProfile.socialLinks.facebook}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:underline"
                         >
-                          {editedProfile.socialLinks.facebook || "Not set"}
+                          {editedProfile.socialLinks.facebook}
                         </a>
+                      ) : (
+                        "Not set"
                       )}
                     </div>
                     <div className="flex items-center space-x-4">
@@ -454,15 +448,17 @@ const Dashboard = () => {
                           placeholder="Twitter URL"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
-                      ) : (
+                      ) : editedProfile.socialLinks.twitter ? (
                         <a
                           href={editedProfile.socialLinks.twitter}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:underline"
                         >
-                          {editedProfile.socialLinks.twitter || "Not set"}
+                          {editedProfile.socialLinks.twitter}
                         </a>
+                      ) : (
+                        "Not set"
                       )}
                     </div>
                     <div className="flex items-center space-x-4">
@@ -476,15 +472,17 @@ const Dashboard = () => {
                           placeholder="LinkedIn URL"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
-                      ) : (
+                      ) : editedProfile.socialLinks.linkedin ? (
                         <a
                           href={editedProfile.socialLinks.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:underline"
                         >
-                          {editedProfile.socialLinks.linkedin || "Not set"}
+                          {editedProfile.socialLinks.linkedin}
                         </a>
+                      ) : (
+                        "Not set"
                       )}
                     </div>
                   </div>
@@ -516,7 +514,6 @@ const Dashboard = () => {
           </div>
         </motion.div>
 
-        {/* Water Stats Dashboard */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -525,7 +522,6 @@ const Dashboard = () => {
           <WaterStats />
         </motion.div>
 
-        {/* Quick Tips Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -533,25 +529,25 @@ const Dashboard = () => {
           className="bg-white rounded-lg shadow-lg p-6 mt-8"
         >
           <h2 className="text-xl font-bold text-gray-800 mb-4">
-            Aquarium Tips
+            Hydroponic Tips
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-semibold text-blue-700">Optimal pH Levels</h3>
+              <h3 className="font-semibold text-blue-700">TDS Levels</h3>
               <p className="text-gray-600 mt-2">
-                Maintain pH between 6.5-7.5 for most freshwater fish
+                Keep TDS in the right range for your specific crops.
               </p>
             </div>
             <div className="p-4 bg-green-50 rounded-lg">
-              <h3 className="font-semibold text-green-700">Oxygen Levels</h3>
+              <h3 className="font-semibold text-green-700">EC Monitoring</h3>
               <p className="text-gray-600 mt-2">
-                Keep dissolved oxygen above 7 mg/L for healthy fish
+                Proper EC ensures balanced nutrient uptake.
               </p>
             </div>
             <div className="p-4 bg-cyan-50 rounded-lg">
-              <h3 className="font-semibold text-cyan-700">Water Changes</h3>
+              <h3 className="font-semibold text-cyan-700">Temperature</h3>
               <p className="text-gray-600 mt-2">
-                Regular 20% water changes every 1-2 weeks
+                Stable root-zone temperatures boost plant vitality.
               </p>
             </div>
           </div>

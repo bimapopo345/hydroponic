@@ -1,38 +1,48 @@
-import { TrendingUp, BarChart3, HeartPulse, Droplets } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { Droplets, Leaf, Flower, Sun } from "lucide-react";
+import { motion } from "framer-motion";
 
 const benefits = [
   {
-    icon: <TrendingUp className="w-12 h-12" />,
-    title: "Improved Efficiency",
-    description: "Save up to 30% on feed costs with precise automated dispensing and smart monitoring"
-  },
-  {
-    icon: <BarChart3 className="w-12 h-12" />,
-    title: "Optimal Growth",
-    description: "Achieve better growth rates with precise feeding schedules and environmental control"
-  },
-  {
-    icon: <HeartPulse className="w-12 h-12" />,
-    title: "Better Fish Health",
-    description: "Maintain ideal conditions with real-time pH and temperature monitoring"
-  },
-  {
     icon: <Droplets className="w-12 h-12" />,
-    title: "Water Quality",
-    description: "Prevent overfeeding and maintain optimal water conditions automatically"
-  }
-]
+    title: "Optimized Water Usage",
+    description:
+      "Control nutrient solution more precisely, reducing water waste in your hydroponic setup.",
+  },
+  {
+    icon: <Leaf className="w-12 h-12" />,
+    title: "Faster Plant Growth",
+    description:
+      "Consistent monitoring of TDS, EC, and pH leads to stronger, healthier plants with quicker growth.",
+  },
+  {
+    icon: <Flower className="w-12 h-12" />,
+    title: "Higher Yields",
+    description:
+      "Keep nutrients balanced at all times to enhance overall productivity and crop yield.",
+  },
+  {
+    icon: <Sun className="w-12 h-12" />,
+    title: "Energy Efficiency",
+    description:
+      "Automate nutrient cycles to keep resource usage low and maintain ideal growing conditions.",
+  },
+];
 
 export default function Benefits() {
   return (
-    <div id="benefits" className="py-20 bg-gradient-to-br from-teal-900 via-blue-900 to-teal-900">
+    <div
+      id="benefits"
+      className="py-20 bg-gradient-to-br from-teal-900 via-blue-900 to-teal-900"
+    >
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-teal-400 to-blue-400 bg-clip-text text-transparent">Key Benefits</h2>
-          <p className="text-xl text-teal-100">Why choose GrowFeed for your fish farm</p>
+          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-teal-400 to-blue-400 bg-clip-text text-transparent">
+            Key Benefits
+          </h2>
+          <p className="text-xl text-teal-100">
+            Why monitor your hydroponic system with HidroNutrient
+          </p>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {benefits.map((benefit, index) => (
             <motion.div
@@ -44,7 +54,9 @@ export default function Benefits() {
             >
               <div className="text-teal-400">{benefit.icon}</div>
               <div>
-                <h3 className="text-xl font-semibold mb-2 text-white">{benefit.title}</h3>
+                <h3 className="text-xl font-semibold mb-2 text-white">
+                  {benefit.title}
+                </h3>
                 <p className="text-teal-100">{benefit.description}</p>
               </div>
             </motion.div>
@@ -52,5 +64,5 @@ export default function Benefits() {
         </div>
       </div>
     </div>
-  )
+  );
 }

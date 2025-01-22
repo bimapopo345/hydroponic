@@ -19,8 +19,8 @@ const PORT = process.env.PORT || 5000;
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "bimapopo345@gmail.com",
-    pass: "lqdo qyny xdkx lvsr",
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -29,7 +29,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? "https://fishtech-v2.vercel.app" // Production frontend URL
+        ? "https://your-frontend-url.vercel.app" // Production frontend URL
         : "http://localhost:5173", // Development frontend URL
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -41,39 +41,39 @@ app.use(bodyParser.json());
 // Connect to MongoDB
 mongoose
   .connect("mongodb+srv://bimapopo81:Bima1234@sinau.q23pt.mongodb.net/", {
-    dbName: "air",
+    dbName: "hidroponik", // Changed from 'air' to 'hidroponik'
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("MongoDB connected"))
+  .then(() => console.log("MongoDB connected to hidroponik database"))
   .catch((err) => console.log(err));
 
-// Generate random water stats
-const generateWaterStats = () => ({
-  ph: Number((Math.random() * (7.5 - 6.5) + 6.5).toFixed(1)),
-  temperature: Number((Math.random() * (27 - 23) + 23).toFixed(1)),
-  oxygen: Number((Math.random() * (9 - 7) + 7).toFixed(1)),
-  turbidity: Number((Math.random() * (6 - 4) + 4).toFixed(1)),
+// Generate random nutrient stats
+const generateNutrientStats = () => ({
+  tds: Number((Math.random() * (900 - 200) + 200).toFixed(1)),
+  ec: Number((Math.random() * (1500 - 500) + 500).toFixed(1)),
+  temperature: Number((Math.random() * (30 - 20) + 20).toFixed(1)),
+  ph: Number((Math.random() * (7 - 5.5) + 5.5).toFixed(1)),
 });
 
 // Send welcome email
 const sendWelcomeEmail = async (email, username) => {
   try {
     await transporter.sendMail({
-      from: "bimapopo345@gmail.com",
+      from: process.env.EMAIL_USER,
       to: email,
-      subject: "Welcome to GrowFeed!",
+      subject: "Welcome to HidroNutrient!",
       html: `
-        <h2>Welcome to GrowFeed, ${username}!</h2>
-        <p>Thank you for registering with GrowFeed. We're excited to have you on board!</p>
+        <h2>Welcome to HidroNutrient, ${username}!</h2>
+        <p>Thank you for registering. We're excited to help you monitor your hydroponic system!</p>
         <p>With your account, you can:</p>
         <ul>
-          <li>Monitor your aquarium's water quality</li>
-          <li>Track historical data</li>
-          <li>Receive expert recommendations</li>
+          <li>Monitor real-time TDS, EC, pH, and temperature</li>
+          <li>Track historical data for nutrient solutions</li>
+          <li>Optimize plant growth with data-driven insights</li>
         </ul>
         <p>If you have any questions, feel free to reply to this email.</p>
-        <p>Best regards,<br>The GrowFeed Team</p>
+        <p>Best regards,<br>The HidroNutrient Team</p>
       `,
     });
     console.log("Welcome email sent successfully");
@@ -88,7 +88,6 @@ app.post("/register", async (req, res) => {
   console.log("Registration attempt:", { username, email });
 
   try {
-    // Check if user already exists
     const existingUser = await User.findOne({
       $or: [{ username }, { email }],
     });
@@ -106,37 +105,24 @@ app.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user with initial dashboard data
+    // Create new user with initial data
     const user = new User({
       username,
       email,
       password: hashedPassword,
-      profile: {
-        fullName: "",
-        avatar: "",
-        bio: "",
-        phone: "",
-        address: "",
-        company: "",
-        position: "",
-        socialLinks: {
-          facebook: "",
-          twitter: "",
-          linkedin: "",
-        },
-      },
+      profile: {},
       dashboardData: {
         lastLogin: new Date(),
-        stats: generateWaterStats(),
+        stats: generateNutrientStats(),
         history: Array.from({ length: 24 }, (_, i) => ({
           time: `${i}:00`,
-          ...generateWaterStats(),
+          ...generateNutrientStats(),
         })),
       },
     });
 
     await user.save();
-    console.log("User saved successfully:", user._id);
+    console.log("User registered successfully:", user._id);
 
     // Send welcome email
     await sendWelcomeEmail(email, username);
@@ -170,10 +156,10 @@ app.post("/login", async (req, res) => {
 
     // Update last login and generate new stats
     user.dashboardData.lastLogin = new Date();
-    user.dashboardData.stats = generateWaterStats();
+    user.dashboardData.stats = generateNutrientStats();
     user.dashboardData.history = Array.from({ length: 24 }, (_, i) => ({
       time: `${i}:00`,
-      ...generateWaterStats(),
+      ...generateNutrientStats(),
     }));
 
     await user.save();
@@ -206,40 +192,20 @@ app.get("/dashboard/:userId", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Ensure profile exists
-    if (!user.profile) {
-      console.log("Initializing missing profile for user:", userId);
-      user.profile = {
-        fullName: "",
-        avatar: "",
-        bio: "",
-        phone: "",
-        address: "",
-        company: "",
-        position: "",
-        socialLinks: {
-          facebook: "",
-          twitter: "",
-          linkedin: "",
-        },
-      };
-    }
-
-    // Ensure dashboardData exists
+    // Ensure profile and dashboardData exist
     if (!user.dashboardData) {
-      console.log("Initializing missing dashboardData for user:", userId);
       user.dashboardData = {
         lastLogin: new Date(),
-        stats: generateWaterStats(),
+        stats: generateNutrientStats(),
         history: Array.from({ length: 24 }, (_, i) => ({
           time: `${i}:00`,
-          ...generateWaterStats(),
+          ...generateNutrientStats(),
         })),
       };
     }
 
-    // Generate new stats for real-time feel
-    const newStats = generateWaterStats();
+    // Generate new stats for a real-time feel
+    const newStats = generateNutrientStats();
     user.dashboardData.stats = newStats;
     user.dashboardData.history = [
       ...user.dashboardData.history.slice(1),
@@ -283,21 +249,21 @@ app.post("/forgot-password", async (req, res) => {
     // Send reset email
     const resetUrl = `${
       process.env.NODE_ENV === "production"
-        ? "https://fishtech-v2.vercel.app"
+        ? "https://your-frontend-url.vercel.app"
         : "http://localhost:5173"
     }/reset-password/${token}`;
     const mailOptions = {
-      from: "bimapopo345@gmail.com",
+      from: process.env.EMAIL_USER,
       to: user.email,
-      subject: "Password Reset Request - GrowFeed",
+      subject: "Password Reset Request - HidroNutrient",
       html: `
         <h2>Password Reset Request</h2>
-        <p>Hi ${user.username},</p>
+        <p>Hello ${user.username},</p>
         <p>You requested a password reset. Click the link below to reset your password:</p>
         <a href="${resetUrl}" style="padding: 10px 20px; background-color: #0ea5e9; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0;">Reset Password</a>
         <p>This link will expire in 1 hour.</p>
-        <p>If you didn't request this, please ignore this email and your password will remain unchanged.</p>
-        <p>Best regards,<br>The GrowFeed Team</p>
+        <p>If you didn't request this, please ignore this email.</p>
+        <p>Best regards,<br>The HidroNutrient Team</p>
       `,
     };
 
@@ -334,17 +300,17 @@ app.post("/reset-password", async (req, res) => {
     user.resetPasswordExpires = null;
     await user.save();
 
-    // Send confirmation email
+    // Confirmation email
     await transporter.sendMail({
-      from: "bimapopo345@gmail.com",
+      from: process.env.EMAIL_USER,
       to: user.email,
-      subject: "Password Reset Successful - GrowFeed",
+      subject: "Password Reset Successful - HidroNutrient",
       html: `
         <h2>Password Reset Successful</h2>
-        <p>Hi ${user.username},</p>
+        <p>Hello ${user.username},</p>
         <p>Your password has been successfully reset.</p>
-        <p>If you did not perform this action, please contact us immediately.</p>
-        <p>Best regards,<br>The GrowFeed Team</p>
+        <p>If you did not perform this action, please contact support immediately.</p>
+        <p>Best regards,<br>The HidroNutrient Team</p>
       `,
     });
 
@@ -367,7 +333,6 @@ app.put("/profile/:userId", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Update profile fields
     user.profile = {
       ...user.profile,
       ...profileData,

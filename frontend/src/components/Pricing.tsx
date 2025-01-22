@@ -1,72 +1,73 @@
-import { Check } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { Check } from "lucide-react";
+import { motion } from "framer-motion";
 
 const plans = [
   {
     name: "Starter",
-    price: "499",
-    description: "Perfect for small fish farms",
+    price: "399",
+    description: "For small home hydroponic setups",
     features: [
-      "Basic feeding automation",
-      "Temperature monitoring",
-      "Mobile app access",
+      "Basic TDS/EC monitoring",
+      "Manual nutrient adjustment",
       "Email support",
-      "1 feeding station"
-    ]
+      "1 sensor station",
+    ],
   },
   {
     name: "Professional",
-    price: "999",
-    description: "Ideal for medium-sized operations",
+    price: "799",
+    description: "Ideal for medium-scale growers",
     features: [
-      "Advanced feeding automation",
-      "Full environmental monitoring",
-      "Real-time analytics",
+      "Full TDS/EC/pH monitoring",
+      "Automated nutrient dosing",
+      "Real-time alerts",
       "Priority support",
-      "Up to 3 feeding stations"
-    ]
+      "Up to 3 sensor stations",
+    ],
   },
   {
     name: "Enterprise",
-    price: "1999",
-    description: "For large commercial farms",
+    price: "1499",
+    description: "For commercial operations",
     features: [
       "Complete automation suite",
       "Advanced analytics & AI",
-      "Custom integration",
+      "Custom integrations",
       "24/7 dedicated support",
-      "Unlimited feeding stations"
-    ]
-  }
-]
+      "Unlimited sensor stations",
+    ],
+  },
+];
 
 export default function Pricing() {
   const handleGetStarted = (planName: string) => {
-    // Save selected plan to localStorage
-    localStorage.setItem('selectedPlan', planName)
-    
-    // Scroll to contact form
-    const contactSection = document.querySelector('#contact')
+    localStorage.setItem("selectedPlan", planName);
+
+    const contactSection = document.querySelector("#contact");
     if (contactSection) {
-      const navHeight = 64
-      const elementPosition = contactSection.getBoundingClientRect().top + window.scrollY
-      const offsetPosition = elementPosition - navHeight
+      const navHeight = 64;
+      const elementPosition =
+        contactSection.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - navHeight;
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: 'smooth'
-      })
+        behavior: "smooth",
+      });
     }
-  }
+  };
 
   return (
     <div id="pricing" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-xl text-gray-600">Choose the perfect plan for your farm</p>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Simple, Transparent Pricing
+          </h2>
+          <p className="text-xl text-gray-600">
+            Choose the perfect plan for your hydroponic setup
+          </p>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {plans.map((plan, index) => (
             <motion.div
@@ -76,10 +77,14 @@ export default function Pricing() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="border rounded-xl p-8 hover:shadow-lg transition-shadow"
             >
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                {plan.name}
+              </h3>
               <p className="text-gray-600 mb-4">{plan.description}</p>
               <div className="mb-6">
-                <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
+                <span className="text-4xl font-bold text-gray-900">
+                  ${plan.price}
+                </span>
                 <span className="text-gray-600">/month</span>
               </div>
               <ul className="space-y-4 mb-8">
@@ -90,7 +95,7 @@ export default function Pricing() {
                   </li>
                 ))}
               </ul>
-              <button 
+              <button
                 onClick={() => handleGetStarted(plan.name)}
                 className="w-full btn-primary"
               >
@@ -101,5 +106,5 @@ export default function Pricing() {
         </div>
       </div>
     </div>
-  )
+  );
 }

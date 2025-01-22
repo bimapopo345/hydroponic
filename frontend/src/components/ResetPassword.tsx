@@ -18,7 +18,6 @@ const ResetPassword = () => {
       setError("Passwords do not match");
       return;
     }
-
     setIsLoading(true);
     setMessage("");
     setError("");
@@ -58,28 +57,16 @@ const ResetPassword = () => {
       >
         <div className="relative h-48 bg-gradient-to-r from-cyan-500 to-blue-500">
           <motion.div
-            animate={{
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "linear",
-            }}
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
             className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
           >
             <Lock size={48} className="text-white" />
           </motion.div>
           <div className="absolute bottom-0 w-full">
             <motion.div
-              animate={{
-                y: [0, -5, 0],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
               <Waves className="w-full text-white opacity-30" />
             </motion.div>
