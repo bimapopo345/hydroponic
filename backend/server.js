@@ -19,8 +19,8 @@ const PORT = process.env.PORT || 5000;
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: "bimapopo345@gmail.com",
+    pass: "lqdo qyny xdkx lvsr",
   },
 });
 
@@ -60,7 +60,7 @@ const generateNutrientStats = () => ({
 const sendWelcomeEmail = async (email, username) => {
   try {
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: "bimapopo345@gmail.com",
       to: email,
       subject: "Welcome to HidroNutrient!",
       html: `
@@ -253,7 +253,7 @@ app.post("/forgot-password", async (req, res) => {
         : "http://localhost:5173"
     }/reset-password/${token}`;
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: "bimapopo345@gmail.com",
       to: user.email,
       subject: "Password Reset Request - HidroNutrient",
       html: `
@@ -302,7 +302,7 @@ app.post("/reset-password", async (req, res) => {
 
     // Confirmation email
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: "bimapopo345@gmail.com",
       to: user.email,
       subject: "Password Reset Successful - HidroNutrient",
       html: `
