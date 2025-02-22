@@ -1,0 +1,148 @@
+{
+  "info": {
+    "_postman_id": "1234-5678-9abc-def0",
+    "name": "HidroNutrient API",
+    "description": "API Collection untuk HidroNutrient Monitoring System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Sensor Data",
+      "item": [
+        {
+          "name": "Add Sensor Data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{userId}}\",\n    \"deviceId\": \"{{deviceId}}\",\n    \"temperature\": 25.5,\n    \"ph\": 6.5,\n    \"distance\": 15.2,\n    \"ppm\": 750\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sensor-data",
+              "host": ["{{baseUrl}}"],
+              "path": ["sensor-data"]
+            },
+            "description": "Menambahkan data sensor baru"
+          }
+        },
+        {
+          "name": "Get Latest Data",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/sensor-data/{{userId}}/latest",
+              "host": ["{{baseUrl}}"],
+              "path": ["sensor-data", "{{userId}}", "latest"]
+            },
+            "description": "Mengambil data sensor terbaru"
+          }
+        },
+        {
+          "name": "Get History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/sensor-data/{{userId}}/history?from=2025-02-21&to=2025-02-22&limit=100",
+              "host": ["{{baseUrl}}"],
+              "path": ["sensor-data", "{{userId}}", "history"],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2025-02-21"
+                },
+                {
+                  "key": "to",
+                  "value": "2025-02-22"
+                },
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            },
+            "description": "Mengambil riwayat data sensor"
+          }
+        },
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/sensor-data/{{userId}}/stats?period=24h",
+              "host": ["{{baseUrl}}"],
+              "path": ["sensor-data", "{{userId}}", "stats"],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "24h"
+                }
+              ]
+            },
+            "description": "Mengambil statistik data sensor"
+          }
+        },
+        {
+          "name": "Simulate Data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{userId}}\",\n    \"deviceId\": \"{{deviceId}}\",\n    \"count\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sensor-data/simulate",
+              "host": ["{{baseUrl}}"],
+              "path": ["sensor-data", "simulate"]
+            },
+            "description": "Generate data sensor simulasi untuk testing"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "your-user-id",
+      "type": "string"
+    },
+    {
+      "key": "deviceId",
+      "value": "ESP32_01",
+      "type": "string"
+    }
+  ]
+}

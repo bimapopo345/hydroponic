@@ -8,6 +8,7 @@ import crypto from "crypto";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import User from "./models/User.js";
+import sensorRoutes from "./routes/sensorRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -37,6 +38,9 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+
+// Sensor routes
+app.use("/api", sensorRoutes);
 
 // Connect to MongoDB
 mongoose
