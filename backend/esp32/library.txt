@@ -1,0 +1,72 @@
+# Library yang dibutuhkan untuk proyek ini
+
+1. WiFi (Built-in)
+   - Untuk koneksi WiFi
+   - Sudah termasuk dalam ESP32 Arduino Core
+
+2. HTTPClient (Built-in)
+   - Untuk melakukan HTTP request
+   - Sudah termasuk dalam ESP32 Arduino Core
+
+3. ArduinoJson
+   - Versi: 6.x
+   - Author: Benoit Blanchon
+   - Install dari Library Manager Arduino IDE
+   - Untuk serialisasi/deserialisasi JSON
+
+4. OneWire
+   - Author: Paul Stoffregen
+   - Install dari Library Manager Arduino IDE
+   - Untuk komunikasi dengan sensor suhu DS18B20
+
+5. DallasTemperature
+   - Author: Miles Burton
+   - Install dari Library Manager Arduino IDE
+   - Untuk membaca sensor suhu DS18B20
+
+# Cara Instalasi Library
+
+1. Buka Arduino IDE
+2. Pilih menu Sketch > Include Library > Manage Libraries
+3. Cari dan install library berikut:
+   - ArduinoJson
+   - OneWire
+   - DallasTemperature
+
+# Setting Board
+
+1. File > Preferences > Additional Board Manager URLs:
+   - https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+
+2. Tools > Board > Boards Manager:
+   - Cari "esp32" dan install "ESP32 by Espressif Systems"
+
+3. Board Settings:
+   - Board: "ESP32S3 Dev Module"
+   - Upload Speed: "921600"
+   - USB CDC On Boot: "Enabled"
+   - CPU Frequency: "240MHz (WiFi)"
+   - Core Debug Level: "Info"
+   - USB Mode: "Hardware CDC and JTAG"
+   - Flash Mode: "QIO 80MHz"
+   - Flash Size: "16MB (128Mb)"
+   - Partition Scheme: "16M Flash (3MB APP/9.9MB FATFS)"
+   - PSRAM: "OPI PSRAM"
+
+# Catatan Penting
+
+1. SPIFFS:
+   - Format SPIFFS sebelum pertama kali digunakan
+   - Gunakan ESP32 Sketch Data Upload tool untuk file sistem
+
+2. Dual Core:
+   - Core 0: Membaca sensor (real-time)
+   - Core 1: Pengiriman data dan manajemen WiFi
+
+3. Memory:
+   - Gunakan PSRAM untuk buffer data besar
+   - Monitor heap memory untuk menghindari memory leak
+
+4. Power Management:
+   - Gunakan regulator tegangan yang stabil
+   - Monitor suhu CPU untuk performa optimal
