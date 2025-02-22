@@ -3,13 +3,11 @@ import { Menu, X, Sprout } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const landingPageNavigation = [
-  { name: "Home", href: "#home" },
-  { name: "Features", href: "#features" },
-  { name: "Benefits", href: "#benefits" },
-  { name: "Stats", href: "#water-stats" },
-  { name: "Testimonials", href: "#testimonials" },
-  { name: "Pricing", href: "#pricing" },
-  { name: "Contact", href: "#contact" },
+  { name: "Beranda", href: "#home" },
+  { name: "Fitur", href: "#features" },
+  { name: "Keunggulan", href: "#benefits" },
+  { name: "Statistik", href: "#water-stats" },
+  { name: "Kontak", href: "#contact" },
 ];
 
 export default function Navbar() {
@@ -98,13 +96,13 @@ export default function Navbar() {
                       : "text-gray-100 hover:text-white"
                   } transition-colors`}
                 >
-                  Login
+                  Masuk
                 </button>
                 <button
                   onClick={handleGetStarted}
                   className="btn-primary ml-4 shadow-lg hover:shadow-teal-500/20"
                 >
-                  Get Started
+                  Mulai Sekarang
                 </button>
               </>
             )}
@@ -144,14 +142,14 @@ export default function Navbar() {
                   onClick={() => navigate("/login")}
                   className="block w-full px-4 py-2 text-left text-gray-600 hover:bg-teal-50 hover:text-teal-600 rounded-lg transition-colors"
                 >
-                  Login
+                  Masuk
                 </button>
                 <div className="px-4 pt-2">
                   <button
                     onClick={handleGetStarted}
                     className="btn-primary w-full"
                   >
-                    Get Started
+                    Mulai Sekarang
                   </button>
                 </div>
               </>

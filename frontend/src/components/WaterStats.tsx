@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Droplets, Thermometer, Ruler, Flower2, Clock } from "lucide-react";
+import Model3D from "./Model3D";
 import {
   LineChart,
   Line,
@@ -260,48 +261,56 @@ export default function WaterStats() {
           />
         </div>
 
-        <div className="mt-12 bg-white p-6 rounded-xl shadow-lg">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">
-            Data Historis
-          </h3>
-          <div className="h-[400px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="time" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="tds"
-                  stroke="#059669"
-                  name="PPM (ppm)"
-                  strokeWidth={2}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="distance"
-                  stroke="#0EA5E9"
-                  name="Jarak Air (cm)"
-                  strokeWidth={2}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="temperature"
-                  stroke="#047857"
-                  name="Suhu (°C)"
-                  strokeWidth={2}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="ph"
-                  stroke="#10B981"
-                  name="pH Level"
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+        <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-xl shadow-lg">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+              Data Historis
+            </h3>
+            <div className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="tds"
+                    stroke="#059669"
+                    name="PPM (ppm)"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="distance"
+                    stroke="#0EA5E9"
+                    name="Jarak Air (cm)"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="temperature"
+                    stroke="#047857"
+                    name="Suhu (°C)"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="ph"
+                    stroke="#10B981"
+                    name="pH Level"
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-lg">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+              Model Alat Hidroponik
+            </h3>
+            <Model3D />
           </div>
         </div>
 

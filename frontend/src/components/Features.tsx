@@ -12,49 +12,49 @@ import { motion } from "framer-motion";
 const features = [
   {
     icon: <Droplets className="w-8 h-8" />,
-    title: "TDS & EC Sensors",
+    title: "Sensor PPM",
     description:
-      "Accurate TDS and EC measurement for nutrient solution consistency.",
+      "Pengukuran PPM yang akurat untuk konsistensi larutan nutrisi.",
   },
   {
     icon: <Thermometer className="w-8 h-8" />,
-    title: "Temperature Monitoring",
+    title: "Monitor Suhu",
     description:
-      "Keep root-zone temperatures at optimal levels for plant growth.",
+      "Jaga suhu zona akar pada level optimal untuk pertumbuhan tanaman.",
   },
   {
     icon: <Leaf className="w-8 h-8" />,
-    title: "pH Adjustment",
-    description: "Automated pH balancing to prevent nutrient lockout.",
+    title: "Pengaturan pH",
+    description: "Penyeimbangan pH otomatis untuk mencegah kekurangan nutrisi.",
   },
   {
     icon: <Wand2 className="w-8 h-8" />,
-    title: "Automated Control",
+    title: "Kontrol Otomatis",
     description:
-      "Real-time nutrient dosing and solution cycling using IoT devices.",
+      "Pemberian nutrisi dan sirkulasi larutan secara real-time menggunakan perangkat IoT.",
   },
   {
     icon: <LayoutGrid className="w-8 h-8" />,
-    title: "Historical Data",
-    description:
-      "Access logs and graphs of your hydroponic system's performance.",
+    title: "Data Historis",
+    description: "Akses log dan grafik performa sistem hidroponik Anda.",
   },
   {
     icon: <AlertTriangle className="w-8 h-8" />,
-    title: "Alert System",
+    title: "Sistem Peringatan",
     description:
-      "Receive instant alerts if sensor values exceed safe thresholds.",
+      "Terima peringatan langsung jika nilai sensor melebihi ambang batas aman.",
   },
   {
     icon: <BatteryCharging className="w-8 h-8" />,
-    title: "Energy Efficiency",
+    title: "Hemat Energi",
     description:
-      "Smart scheduling reduces power consumption for pumps and sensors.",
+      "Penjadwalan pintar mengurangi konsumsi daya untuk pompa dan sensor.",
   },
   {
     icon: <Leaf className="w-8 h-8" />,
-    title: "Mobile Access",
-    description: "Monitor and adjust settings from your smartphone or tablet.",
+    title: "Akses Mobile",
+    description:
+      "Pantau dan sesuaikan pengaturan dari smartphone atau tablet Anda.",
   },
 ];
 
@@ -64,10 +64,10 @@ export default function Features() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            System Components
+            Komponen Sistem
           </h2>
           <p className="text-xl text-gray-600">
-            Modern technology for precise hydroponic monitoring
+            Teknologi modern untuk pemantauan hidroponik yang presisi
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -77,9 +77,9 @@ export default function Features() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="p-6 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors"
+              className="p-6 rounded-xl bg-green-50 hover:bg-green-100 transition-colors"
             >
-              <div className="text-blue-600 mb-4">{feature.icon}</div>
+              <div className="text-green-600 mb-4">{feature.icon}</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 {feature.title}
               </h3>

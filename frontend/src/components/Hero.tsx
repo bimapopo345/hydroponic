@@ -64,25 +64,25 @@ export default function Hero() {
               <h1 className="text-5xl font-bold text-white">HidroNutrient</h1>
             </div>
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 bg-gradient-to-r from-teal-400 to-blue-400 bg-clip-text text-transparent">
-              Smart Hydroponic Monitoring System
+              Sistem Monitoring Hidroponik Pintar
             </h2>
             <p className="text-xl text-teal-100 mb-8 max-w-2xl mx-auto">
-              Automate your hydroponic nutrient solution checks. Track TDS, EC,
-              pH, and temperature in real-time to boost plant growth and
-              productivity.
+              Otomatisasi pemeriksaan nutrisi hidroponik Anda. Pantau PPM, pH,
+              suhu, dan jarak air secara real-time untuk meningkatkan
+              pertumbuhan dan produktivitas tanaman.
             </p>
             <div className="flex gap-4 justify-center">
               <button
                 onClick={handleGetStarted}
                 className="bg-gradient-to-r from-teal-500 to-blue-500 text-white px-8 py-3 rounded-full font-semibold hover:from-teal-600 hover:to-blue-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-teal-500/20"
               >
-                Get Started
+                Mulai Sekarang
               </button>
               <button
                 onClick={handleViewDemo}
                 className="border-2 border-teal-400 text-teal-400 px-8 py-3 rounded-full font-semibold hover:bg-teal-400/10 transition-all transform hover:scale-105"
               >
-                View Demo
+                Lihat Demo
               </button>
             </div>
           </motion.div>

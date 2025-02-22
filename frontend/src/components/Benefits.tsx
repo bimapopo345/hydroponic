@@ -4,27 +4,27 @@ import { motion } from "framer-motion";
 const benefits = [
   {
     icon: <Droplets className="w-12 h-12" />,
-    title: "Optimized Water Usage",
+    title: "Penggunaan Air Optimal",
     description:
-      "Control nutrient solution more precisely, reducing water waste in your hydroponic setup.",
+      "Kontrol larutan nutrisi lebih presisi, mengurangi pemborosan air dalam sistem hidroponik Anda.",
   },
   {
     icon: <Leaf className="w-12 h-12" />,
-    title: "Faster Plant Growth",
+    title: "Pertumbuhan Lebih Cepat",
     description:
-      "Consistent monitoring of TDS, EC, and pH leads to stronger, healthier plants with quicker growth.",
+      "Pemantauan PPM dan pH secara konsisten menghasilkan tanaman yang lebih kuat dan sehat dengan pertumbuhan lebih cepat.",
   },
   {
     icon: <Flower className="w-12 h-12" />,
-    title: "Higher Yields",
+    title: "Hasil Panen Maksimal",
     description:
-      "Keep nutrients balanced at all times to enhance overall productivity and crop yield.",
+      "Jaga keseimbangan nutrisi setiap saat untuk meningkatkan produktivitas dan hasil panen.",
   },
   {
     icon: <Sun className="w-12 h-12" />,
-    title: "Energy Efficiency",
+    title: "Hemat Energi",
     description:
-      "Automate nutrient cycles to keep resource usage low and maintain ideal growing conditions.",
+      "Otomatisasi siklus nutrisi untuk menjaga penggunaan sumber daya tetap rendah dan kondisi pertumbuhan optimal.",
   },
 ];
 
@@ -37,10 +37,10 @@ export default function Benefits() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-teal-400 to-blue-400 bg-clip-text text-transparent">
-            Key Benefits
+            Keunggulan Utama
           </h2>
           <p className="text-xl text-teal-100">
-            Why monitor your hydroponic system with HidroNutrient
+            Mengapa memantau sistem hidroponik Anda dengan HidroNutrient
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
