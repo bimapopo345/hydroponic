@@ -12,6 +12,9 @@
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/react-router-dom": "^5.3.3",
+    "@react-three/drei": "^9.99.7",
+    "@react-three/fiber": "8.15.19",
+    "three": "^0.161.0",
     "framer-motion": "^11.13.1",
     "lucide-react": "^0.453.0",
     "react": "^18.3.1",

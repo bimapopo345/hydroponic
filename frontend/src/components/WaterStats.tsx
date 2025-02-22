@@ -15,10 +15,10 @@ import {
 type UpdateInterval = "second" | "minute" | "hour" | "day";
 
 const intervalOptions = [
-  { value: "second" as UpdateInterval, label: "Every Second", ms: 1000 },
-  { value: "minute" as UpdateInterval, label: "Every Minute", ms: 60000 },
-  { value: "hour" as UpdateInterval, label: "Hourly", ms: 3600000 },
-  { value: "day" as UpdateInterval, label: "Daily", ms: 86400000 },
+  { value: "second" as UpdateInterval, label: "Setiap Detik", ms: 1000 },
+  { value: "minute" as UpdateInterval, label: "Setiap Menit", ms: 60000 },
+  { value: "hour" as UpdateInterval, label: "Per Jam", ms: 3600000 },
+  { value: "day" as UpdateInterval, label: "Per Hari", ms: 86400000 },
 ];
 
 interface StatCardProps {
@@ -61,7 +61,7 @@ function StatCard({ title, value, unit, icon, color, change }: StatCardProps) {
         >
           {change >= 0 ? "↑" : "↓"} {Math.abs(change)}%
         </span>
-        <span className="text-gray-500 text-sm ml-2">vs last update</span>
+        <span className="text-gray-500 text-sm ml-2">vs update terakhir</span>
       </div>
     </motion.div>
   );
@@ -71,8 +71,8 @@ function StatCard({ title, value, unit, icon, color, change }: StatCardProps) {
 function randomTDS() {
   return Number((Math.random() * (900 - 200) + 200).toFixed(1));
 }
-function randomEC() {
-  return Number((Math.random() * (1500 - 500) + 500).toFixed(1));
+function randomDistance() {
+  return Number((Math.random() * (100 - 5) + 5).toFixed(1));
 }
 function randomTemperature() {
   return Number((Math.random() * (30 - 20) + 20).toFixed(1));
@@ -91,7 +91,7 @@ function generateInitialData() {
     data.push({
       time: `${i}:00`,
       tds: randomTDS(),
-      ec: randomEC(),
+      distance: randomDistance(),
       temperature: randomTemperature(),
       ph: randomPH(),
     });
@@ -105,12 +105,12 @@ export default function WaterStats() {
   const [isUpdating, setIsUpdating] = useState(true);
 
   const [tds, setTDS] = useState(randomTDS());
-  const [ec, setEC] = useState(randomEC());
+  const [distance, setDistance] = useState(randomDistance());
   const [temperature, setTemperature] = useState(randomTemperature());
   const [ph, setPH] = useState(randomPH());
 
   const [tdsChange, setTDSChange] = useState(0);
-  const [ecChange, setECChange] = useState(0);
+  const [distanceChange, setDistanceChange] = useState(0);
   const [tempChange, setTempChange] = useState(0);
   const [phChange, setPHChange] = useState(0);
 
@@ -118,17 +118,17 @@ export default function WaterStats() {
 
   const updateStats = () => {
     const newTDS = randomTDS();
-    const newEC = randomEC();
+    const newDistance = randomDistance();
     const newTemp = randomTemperature();
     const newPH = randomPH();
 
     setTDSChange(((newTDS - tds) / tds) * 100);
-    setECChange(((newEC - ec) / ec) * 100);
+    setDistanceChange(((newDistance - distance) / distance) * 100);
     setTempChange(((newTemp - temperature) / temperature) * 100);
     setPHChange(((newPH - ph) / ph) * 100);
 
     setTDS(newTDS);
-    setEC(newEC);
+    setDistance(newDistance);
     setTemperature(newTemp);
     setPH(newPH);
 
@@ -139,7 +139,7 @@ export default function WaterStats() {
         {
           time: new Date().toLocaleTimeString(),
           tds: newTDS,
-          ec: newEC,
+          distance: newDistance,
           temperature: newTemp,
           ph: newPH,
         },
@@ -165,7 +165,7 @@ export default function WaterStats() {
         clearInterval(intervalId);
       }
     };
-  }, [updateInterval, isUpdating, tds, ec, temperature, ph]);
+  }, [updateInterval, isUpdating, tds, distance, temperature, ph]);
 
   const getUpdateText = () => {
     const intervalOption = intervalOptions.find(
@@ -185,22 +185,22 @@ export default function WaterStats() {
   return (
     <div
       id="water-stats"
-      className="py-20 bg-gradient-to-br from-blue-50 to-teal-50"
+      className="py-20 bg-gradient-to-br from-green-50 to-emerald-50"
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Nutrient Solution Dashboard
+            Dashboard Monitoring Nutrisi
           </h2>
           <p className="text-xl text-gray-600">
-            Real-time monitoring of TDS, EC, pH, and temperature
+            Pemantauan Realtime Suhu, pH, Jarak, dan PPM
           </p>
         </div>
 
         <div className="mb-8 flex flex-wrap items-center justify-center gap-4">
           <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-md">
             <Clock className="w-5 h-5 text-gray-500" />
-            <span className="text-gray-700">Update Interval:</span>
+            <span className="text-gray-700">Interval Update:</span>
           </div>
           {intervalOptions.map((option) => (
             <button
@@ -208,8 +208,8 @@ export default function WaterStats() {
               onClick={() => handleIntervalChange(option.value)}
               className={`px-4 py-2 rounded-lg transition-all ${
                 updateInterval === option.value
-                  ? "bg-blue-500 text-white shadow-md"
-                  : "bg-white text-gray-600 hover:bg-blue-50"
+                  ? "bg-green-600 text-white shadow-md"
+                  : "bg-white text-gray-600 hover:bg-green-50"
               }`}
             >
               {option.label}
@@ -221,48 +221,48 @@ export default function WaterStats() {
               isUpdating ? "bg-red-500 text-white" : "bg-green-500 text-white"
             }`}
           >
-            {isUpdating ? "Pause Updates" : "Resume Updates"}
+            {isUpdating ? "Hentikan Update" : "Mulai Update"}
           </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
-            title="TDS"
+            title="PPM"
             value={tds.toString()}
             unit="ppm"
-            icon={<Droplets className="w-6 h-6 text-blue-500" />}
-            color="border-l-blue-500"
+            icon={<Droplets className="w-6 h-6 text-green-600" />}
+            color="border-l-green-600"
             change={tdsChange}
           />
           <StatCard
-            title="EC"
-            value={ec.toString()}
-            unit="µS/cm"
-            icon={<Ruler className="w-6 h-6 text-orange-500" />}
-            color="border-l-orange-500"
-            change={ecChange}
+            title="Jarak Air"
+            value={distance.toString()}
+            unit="cm"
+            icon={<Ruler className="w-6 h-6 text-emerald-500" />}
+            color="border-l-emerald-500"
+            change={distanceChange}
           />
           <StatCard
-            title="Temperature"
+            title="Suhu"
             value={temperature.toString()}
             unit="°C"
-            icon={<Thermometer className="w-6 h-6 text-red-500" />}
-            color="border-l-red-500"
+            icon={<Thermometer className="w-6 h-6 text-emerald-600" />}
+            color="border-l-emerald-600"
             change={tempChange}
           />
           <StatCard
             title="pH"
             value={ph.toString()}
             unit=""
-            icon={<Flower2 className="w-6 h-6 text-green-500" />}
-            color="border-l-green-500"
+            icon={<Flower2 className="w-6 h-6 text-emerald-500" />}
+            color="border-l-emerald-500"
             change={phChange}
           />
         </div>
 
         <div className="mt-12 bg-white p-6 rounded-xl shadow-lg">
           <h3 className="text-2xl font-bold text-gray-900 mb-6">
-            Historical Data
+            Data Historis
           </h3>
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -275,29 +275,29 @@ export default function WaterStats() {
                 <Line
                   type="monotone"
                   dataKey="tds"
-                  stroke="#3B82F6"
-                  name="TDS (ppm)"
+                  stroke="#059669"
+                  name="PPM (ppm)"
                   strokeWidth={2}
                 />
                 <Line
                   type="monotone"
-                  dataKey="ec"
-                  stroke="#F97316"
-                  name="EC (µS/cm)"
+                  dataKey="distance"
+                  stroke="#0EA5E9"
+                  name="Jarak Air (cm)"
                   strokeWidth={2}
                 />
                 <Line
                   type="monotone"
                   dataKey="temperature"
-                  stroke="#EF4444"
-                  name="Temperature (°C)"
+                  stroke="#047857"
+                  name="Suhu (°C)"
                   strokeWidth={2}
                 />
                 <Line
                   type="monotone"
                   dataKey="ph"
                   stroke="#10B981"
-                  name="pH"
+                  name="pH Level"
                   strokeWidth={2}
                 />
               </LineChart>
@@ -307,7 +307,7 @@ export default function WaterStats() {
 
         <div className="mt-6 text-center">
           <p className="text-gray-500 text-sm">
-            Updates {getUpdateText()}.{!isUpdating && " (Updates paused)"}
+            Update {getUpdateText()}.{!isUpdating && " (Update dihentikan)"}
           </p>
         </div>
       </div>
