@@ -1,0 +1,32 @@
+Mari saya hitung kapasitas penyimpanannya:
+
+Ukuran satu data point:
+Temperature (float): 4 bytes
+pH (float): 4 bytes
+Distance (float): 4 bytes
+PPM (float): 4 bytes
+Timestamp (unsigned long): 4 bytes Total: 20 bytes per data point
+Kalkulasi untuk 24 jam:
+1 data per detik = 86400 data points per hari
+86400 × 20 bytes = 1,728,000 bytes ≈ 1.7 MB
+ESP32-S3 memory:
+Flash: 16 MB total
+Partisi default:
+Program: 3 MB
+SPIFFS: 9.9 MB
+Sisanya: ~3 MB
+Jadi dari 16 MB:
+
+Data 24 jam hanya butuh 1.7 MB
+SPIFFS tersedia 9.9 MB
+Bisa menyimpan data sekitar 5-6 hari non-stop!
+Strategi penyimpanan yang saya sarankan:
+
+Gunakan SPIFFS dengan sistem circular file
+Bagi data dalam file per jam (24 file)
+Setiap file ~72 KB (3600 data points)
+Saat power kembali:
+Scan semua file
+Kirim dari yang terlama
+Hapus file setelah terkirim
+Apakah Anda ingin saya modifikasi kode untuk mengimplementasikan strategi ini? Ini akan lebih efisien dari sistem sebelumnya yang hanya menyimpan di buffer RAM.

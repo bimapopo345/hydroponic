@@ -4,11 +4,11 @@
 #include "time.h"
 #include "config.h"
 #include "sensor_manager.h"
-#include "data_buffer.h"
+#include "storage_manager.h"
 
 // Inisialisasi objek
 SensorManager sensors;
-DataBuffer dataBuffer;
+StorageManager storage;
 TaskHandle_t sensorTaskHandle;
 TaskHandle_t senderTaskHandle;
 
@@ -19,17 +19,16 @@ portMUX_TYPE mutex = portMUX_INITIALIZER_UNLOCKED;
 bool isWiFiConnected = false;
 unsigned long lastRetryTime = 0;
 int retryCount = 0;
+time_t lastSentTime = 0;
 
 // Forward declarations
 void sensorTask(void* parameter);
 void senderTask(void* parameter);
 void connectToWiFi();
-bool sendDataBatch(SensorData* batch, int count);
+bool sendDataBatch(const std::vector<SensorData>& batch);
 
 void setup() {
     Serial.begin(115200);
-    
-    // Tunggu Serial tersedia
     while (!Serial) delay(100);
     
     Serial.println("\nMemulai sistem monitoring hidroponik...");
@@ -39,8 +38,16 @@ void setup() {
     
     // Sinkronisasi waktu
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+    while (time(nullptr) < 1000000000) {
+        Serial.print(".");
+        delay(100);
+    }
+    Serial.println("\nWaktu telah disinkronkan");
     
-    // Buat task untuk core 0 (sensor) dan core 1 (sender)
+    // Info storage
+    storage.printStorageInfo();
+    
+    // Buat task untuk kedua core
     xTaskCreatePinnedToCore(
         sensorTask,
         "SensorTask",
@@ -54,7 +61,7 @@ void setup() {
     xTaskCreatePinnedToCore(
         senderTask,
         "SenderTask",
-        8192,
+        16384, // Stack lebih besar untuk JSON processing
         NULL,
         SENDER_TASK_PRIORITY,
         &senderTaskHandle,
@@ -63,19 +70,17 @@ void setup() {
 }
 
 void loop() {
-    // Loop utama kosong karena menggunakan FreeRTOS tasks
     delay(1000);
 }
 
-// Task untuk membaca sensor (running di Core 0)
 void sensorTask(void* parameter) {
-    Serial.print("Sensor task running on core ");
-    Serial.println(xPortGetCoreID());
+    Serial.printf("Sensor task running on core %d\n", xPortGetCoreID());
     
     TickType_t xLastWakeTime = xTaskGetTickCount();
     
     while (true) {
-        struct SensorData data = {
+        // Baca sensor
+        SensorData data = {
             .temperature = sensors.readTemperature(),
             .ph = sensors.readPH(),
             .distance = sensors.readDistance(),
@@ -83,12 +88,12 @@ void sensorTask(void* parameter) {
             .timestamp = time(nullptr)
         };
         
-        // Masukkan data ke buffer dengan mutex
+        // Simpan ke storage dengan mutex
         portENTER_CRITICAL(&mutex);
-        dataBuffer.push(data);
+        storage.saveData(data);
         portEXIT_CRITICAL(&mutex);
         
-        // Log data ke Serial
+        // Log data
         Serial.printf("Data: Temp=%.1f°C, pH=%.1f, Dist=%.1fcm, PPM=%.0f\n",
             data.temperature, data.ph, data.distance, data.ppm);
         
@@ -97,19 +102,10 @@ void sensorTask(void* parameter) {
     }
 }
 
-// Task untuk mengirim data (running di Core 1)
 void senderTask(void* parameter) {
-    Serial.print("Sender task running on core ");
-    Serial.println(xPortGetCoreID());
-    
-    // Load data backup jika ada
-    int recoveredItems = dataBuffer.loadFromSPIFFS();
-    if (recoveredItems > 0) {
-        Serial.printf("Berhasil me-recover %d data dari backup\n", recoveredItems);
-    }
+    Serial.printf("Sender task running on core %d\n", xPortGetCoreID());
     
     while (true) {
-        // Cek koneksi WiFi
         if (!isWiFiConnected) {
             if (millis() - lastRetryTime > RETRY_INTERVAL) {
                 connectToWiFi();
@@ -119,35 +115,43 @@ void senderTask(void* parameter) {
             continue;
         }
         
-        // Ambil batch data dengan mutex
-        SensorData batch[BATCH_SIZE];
+        // Cek data yang belum terkirim
         portENTER_CRITICAL(&mutex);
-        int count = dataBuffer.getBatch(batch, BATCH_SIZE);
+        std::vector<SensorData> pendingData = storage.loadPendingData(lastSentTime);
         portEXIT_CRITICAL(&mutex);
         
-        if (count > 0) {
-            if (sendDataBatch(batch, count)) {
-                // Konfirmasi data terkirim dengan mutex
-                portENTER_CRITICAL(&mutex);
-                dataBuffer.confirmBatch(count);
-                portEXIT_CRITICAL(&mutex);
-                retryCount = 0;
-            } else {
-                retryCount++;
-                if (retryCount >= MAX_RETRY) {
-                    Serial.println("Mencapai batas maksimal retry, menyimpan ke backup...");
-                    // Data akan ter-backup otomatis saat buffer penuh
+        if (!pendingData.empty()) {
+            // Kirim dalam batch
+            for (size_t i = 0; i < pendingData.size(); i += BATCH_SIZE) {
+                size_t batchEnd = min(i + BATCH_SIZE, pendingData.size());
+                std::vector<SensorData> batch(
+                    pendingData.begin() + i,
+                    pendingData.begin() + batchEnd
+                );
+                
+                if (sendDataBatch(batch)) {
+                    lastSentTime = batch.back().timestamp;
                     retryCount = 0;
+                    
+                    // Hapus file yang sudah terkirim
+                    portENTER_CRITICAL(&mutex);
+                    storage.deleteFile(lastSentTime);
+                    portEXIT_CRITICAL(&mutex);
+                } else {
+                    retryCount++;
+                    if (retryCount >= MAX_RETRY) {
+                        Serial.println("Mencapai batas maksimal retry");
+                        retryCount = 0;
+                        break;
+                    }
                 }
             }
         }
         
-        // Delay sesuai interval pengiriman
         vTaskDelay(pdMS_TO_TICKS(SEND_INTERVAL));
     }
 }
 
-// Fungsi untuk menghubungkan ke WiFi
 void connectToWiFi() {
     if (WiFi.status() == WL_CONNECTED) {
         isWiFiConnected = true;
@@ -166,8 +170,7 @@ void connectToWiFi() {
     
     if (WiFi.status() == WL_CONNECTED) {
         Serial.println("\nTerhubung ke WiFi!");
-        Serial.print("IP Address: ");
-        Serial.println(WiFi.localIP());
+        Serial.printf("IP Address: %s\n", WiFi.localIP().toString().c_str());
         isWiFiConnected = true;
     } else {
         Serial.println("\nGagal terhubung ke WiFi!");
@@ -175,27 +178,25 @@ void connectToWiFi() {
     }
 }
 
-// Fungsi untuk mengirim batch data ke server
-bool sendDataBatch(SensorData* batch, int count) {
-    if (!isWiFiConnected) return false;
+bool sendDataBatch(const std::vector<SensorData>& batch) {
+    if (!isWiFiConnected || batch.empty()) return false;
     
     HTTPClient http;
     http.begin(serverUrl);
     http.addHeader("Content-Type", "application/json");
     
-    // Buat JSON array
-    DynamicJsonDocument doc(2048);
+    DynamicJsonDocument doc(16384); // Increased size for larger batches
     JsonArray dataArray = doc.createNestedArray("data");
     
-    for (int i = 0; i < count; i++) {
+    for (const auto& data : batch) {
         JsonObject dataObj = dataArray.createNestedObject();
         dataObj["userId"] = userId;
         dataObj["deviceId"] = deviceId;
-        dataObj["temperature"] = batch[i].temperature;
-        dataObj["ph"] = batch[i].ph;
-        dataObj["distance"] = batch[i].distance;
-        dataObj["ppm"] = batch[i].ppm;
-        dataObj["timestamp"] = batch[i].timestamp;
+        dataObj["temperature"] = data.temperature;
+        dataObj["ph"] = data.ph;
+        dataObj["distance"] = data.distance;
+        dataObj["ppm"] = data.ppm;
+        dataObj["timestamp"] = data.timestamp;
     }
     
     String jsonString;
@@ -205,7 +206,7 @@ bool sendDataBatch(SensorData* batch, int count) {
     bool success = (httpCode == HTTP_CODE_OK);
     
     if (success) {
-        Serial.printf("Berhasil mengirim %d data\n", count);
+        Serial.printf("Berhasil mengirim %d data\n", batch.size());
     } else {
         Serial.printf("Gagal mengirim data, code: %d\n", httpCode);
     }
