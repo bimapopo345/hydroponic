@@ -1,134 +1,191 @@
-# Hydroponic Monitor
+# HidroNutrient Monitoring System
 
-A full-stack application for monitoring aquarium water quality, built using a MERN (MongoDB, Express.js, React, Node.js) stack.
+Sistem monitoring hidroponik dengan ESP32-S3 dan web dashboard.
 
-## Project Structure
+## Quick Start
 
-```markdown
-hydroponic-monitor/
-├── backend/         # Express.js backend application
-│   ├── models/      # Database models
-│   ├── server.js    # Main server file
-│   └── .env         # Environment variables
-└── frontend/        # React frontend application
-    ├── src/         # Source files
-    ├── public/      # Public assets
-    └── .env         # Environment variables
-```
-
-## Table of Contents
-
-* [About](#about)
-* [Features](#features)
-* [Technology Stack](#technology-stack)
-* [Prerequisites](#prerequisites)
-* [Installation](#installation)
-* [Usage](#usage)
-* [API Documentation](#api-documentation)
-* [Deployment](#deployment)
-* [Contributing](#contributing)
-* [License](#license)
-* [Contact](#contact)
-
-## About
-
-Hydroponic Monitor is a web application designed to monitor and control hydroponic systems. It provides real-time data on water quality parameters such as TDS, EC, pH, and temperature. The application also allows users to adjust nutrient levels, monitor historical data, and receive alerts when parameters exceed safe thresholds.
-
-## Features
-
-* User authentication and authorization
-* Real-time monitoring of water quality parameters (TDS, EC, pH, temperature)
-* Historical data tracking and visualization
-* Automated alert system for parameter threshold exceedance
-* Nutrient level adjustment and control
-* User profile management
-
-## Technology Stack
-
-### Backend
-
-* **Express.js**: Node.js web framework for building the API
-* **MongoDB**: NoSQL database for storing user data and hydroponic system information
-* **Mongoose**: MongoDB ORM for interacting with the database
-* **Bcrypt**: Password hashing library for secure authentication
-
-### Frontend
-
-* **React**: JavaScript library for building the user interface
-* **Vite**: Development server and build tool for React applications
-* **Tailwind CSS**: CSS framework for styling the application
-* **Recharts**: Library for creating charts and visualizations
-
-### Other Tools
-
-* **Nodemon**: Development tool for automatically restarting the server on code changes
-* **Concurrently**: Tool for running multiple commands concurrently
-
-## Prerequisites
-
-* Node.js (version 16 or higher)
-* MongoDB (version 5 or higher)
-* npm (version 8 or higher)
-* Vite (version 2 or higher)
-
-## Installation
+1. Clone repository:
 
 ```bash
-# Clone the repository
-git clone https://github.com/bimapopo345/hydroponic.git
-cd hydroponic
+git clone https://github.com/yourusername/hidronutrient.git
+cd hidronutrient
+```
 
-# Install dependencies
+2. Install dependencies:
+
+```bash
+# Backend
+cd backend
 npm install
 
-# Create a .env file in the backend directory
+# Frontend
+cd frontend
+npm install
+```
+
+3. Setup development environment:
+
+```bash
+# Terminal 1: Start Backend
 cd backend
-cp .env.example .env
+npm run dev
 
-# Create a .env file in the frontend directory
-cd ../frontend
-cp .env.example .env
-
-# Start the development server
+# Terminal 2: Start Frontend
+cd frontend
 npm run dev
 ```
 
-## Usage
+## Using Ngrok for Remote Access
 
-1. Open a web browser and navigate to `http://localhost:5173`
-2. Register a new user account or log in to an existing account
-3. Configure your hydroponic system settings and parameters
-4. Monitor real-time data and adjust nutrient levels as needed
-5. View historical data and visualize trends
+1. Install ngrok:
 
-## API Documentation
+```bash
+cd backend
+npm install
+```
 
-The API documentation is available at `http://localhost:5000/api/docs`
+2. Start services in order:
 
-## Deployment
+```bash
+# Terminal 1: Start Backend
+cd backend
+npm run dev
 
-The application can be deployed to a production environment using a cloud platform such as Heroku or Vercel.
+# Terminal 2: Start Ngrok tunnel
+cd backend
+npm run ngrok
+# Copy the https URL that appears
 
-### Backend Deployment
+# Terminal 3: Update configurations
+cd backend
+npm run update-ngrok
+```
 
-1. Create a new Heroku app and install the MongoDB add-on
-2. Set environment variables for the MongoDB connection string and other settings
-3. Deploy the backend code to Heroku using Git
+3. Update ESP32:
 
-### Frontend Deployment
+- Upload kode terbaru ke ESP32 setelah URL ngrok diupdate
+- ESP32 akan otomatis terhubung ke URL baru
 
-1. Create a new Vercel app and link it to the frontend repository
-2. Set environment variables for the API endpoint and other settings
-3. Deploy the frontend code to Vercel
+## Folder Structure
 
-## Contributing
+```
+/
+├── backend/
+│   ├── esp32/           # Kode ESP32
+│   ├── models/          # Database models
+│   ├── routes/          # API routes
+│   └── scripts/         # Utility scripts
+├── frontend/
+│   ├── src/
+│   │   ├── components/  # React components
+│   │   └── config/      # API configuration
+│   └── public/          # Static files
+```
 
-Contributions are welcome! Please submit a pull request with your changes and a brief description of the updates.
+## Environment Files
+
+1. Frontend:
+
+- `.env.development`: Development settings
+- `.env.production`: Production settings
+- `.env.local`: Local overrides (diupdate otomatis)
+
+2. Backend:
+
+- `esp32/config.h`: ESP32 configuration
+- `.env`: Server environment variables
+
+## Development Workflow
+
+1. Local Development:
+
+```bash
+# Start backend
+npm run dev
+
+# Start frontend
+cd frontend && npm run dev
+```
+
+2. Remote Development dengan Ngrok:
+
+```bash
+# 1. Start backend
+npm run dev
+
+# 2. Start ngrok
+npm run ngrok
+
+# 3. Update konfigurasi
+npm run update-ngrok
+
+# 4. Upload ulang kode ESP32
+```
+
+## Monitoring & Troubleshooting
+
+1. ESP32 Serial Monitor:
+
+- Baud rate: 115200
+- Output: Sensor data, WiFi status, API calls
+
+2. Ngrok Dashboard:
+
+- URL: http://localhost:4040
+- Monitoring: Request/response, errors
+
+3. Backend Logs:
+
+- Server status
+- Database connections
+- API calls
+
+## Production Deployment
+
+1. Frontend:
+
+```bash
+cd frontend
+npm run build
+```
+
+2. Backend:
+
+```bash
+cd backend
+npm start
+```
+
+3. ESP32:
+
+- Set `USE_NGROK` ke `false`
+- Update `serverUrl` ke URL production
+- Upload kode final
+
+## Security Notes
+
+1. Credentials:
+
+- Jangan commit file `.env`
+- Ganti password WiFi di production
+- Gunakan environment variables
+
+2. API Security:
+
+- HTTPS untuk production
+- Implement rate limiting
+- Validate sensor data
+
+3. Database:
+
+- Backup regular
+- Monitor storage usage
+- Cleanup old data
+
+## Maintainers
+
+- [Your Name](https://github.com/yourusername)
 
 ## License
 
-The Hydroponic Monitor application is licensed under the MIT License.
-
-## Contact
-
-For questions, issues, or feedback, please contact the development team at [bimapopo345@gmail.com](mailto:bimapopo345@gmail.com)
+MIT License - see LICENSE file for details

@@ -2,8 +2,17 @@
 const char* ssid = "BPSI AGROKLIMAT";
 const char* password = "klimat2025";
 
-// Konfigurasi Server
-const char* serverUrl = "http://localhost:5000/api/sensor-data";
+// Ganti URL ini dengan URL ngrok Anda
+#define USE_NGROK true  // Set false jika test lokal
+
+#if USE_NGROK
+    // Update URL ini setiap kali menjalankan ngrok
+    const char* serverUrl = "https://your-ngrok-url.ngrok.io/api/sensor-data";
+#else
+    const char* serverUrl = "http://localhost:5000/api/sensor-data";
+#endif
+
+// Konfigurasi Device
 const char* userId = "your-user-id"; // Ganti dengan user ID dari database
 const char* deviceId = "ESP32_01";
 
