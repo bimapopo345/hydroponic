@@ -16,7 +16,7 @@ function HydroponicModel() {
       import.meta.url
     ).href
   );
-  return <primitive object={scene} scale={25} position={[0, 8, 0]} />; // Scale lebih besar lagi
+  return <primitive object={scene} scale={35} position={[0, 12, 0]} />; // Scale super besar
 }
 
 function LoadingSpinner() {
@@ -35,13 +35,13 @@ export default function Model3D() {
       className="relative w-full h-screen bg-gradient-to-b from-emerald-50 to-white rounded-xl shadow-lg overflow-hidden"
     >
       <Suspense fallback={<LoadingSpinner />}>
-        <Canvas shadows camera={{ position: [80, 80, 80], fov: 45 }}>
+        <Canvas shadows camera={{ position: [100, 100, 100], fov: 45 }}>
           {/* Lighting */}
-          <ambientLight intensity={3} />
+          <ambientLight intensity={4} />
           <directionalLight
-            position={[30, 30, 30]}
+            position={[50, 50, 50]}
             castShadow
-            intensity={5}
+            intensity={6}
             shadow-mapSize-width={4096}
             shadow-mapSize-height={4096}
           />
@@ -53,51 +53,67 @@ export default function Model3D() {
             position={[0, 0, 0]}
             receiveShadow
           >
-            <planeGeometry args={[2000, 2000]} />
+            <planeGeometry args={[3000, 3000]} />
             <shadowMaterial opacity={0.2} />
           </mesh>
 
           {/* Model */}
           <HydroponicModel />
 
-          {/* Controls dengan range yang lebih luas lagi */}
+          {/* Super wide range controls */}
           <OrbitControls
             enablePan={true}
             enableZoom={true}
-            zoomSpeed={2}
+            zoomSpeed={2.5}
             maxPolarAngle={Math.PI / 1.5}
-            minDistance={40}
-            maxDistance={500}
-            target={[0, 15, 0]}
+            minDistance={50}
+            maxDistance={1000}
+            target={[0, 20, 0]}
             enableDamping={true}
             dampingFactor={0.05}
           />
         </Canvas>
       </Suspense>
 
-      {/* Instructions dengan style yang lebih menarik */}
-      <div className="absolute top-4 left-4 text-sm bg-white/90 p-4 rounded-lg shadow-xl space-y-2 backdrop-blur-sm border border-emerald-100">
-        <div className="font-bold text-emerald-600 border-b pb-2 mb-2 text-base">
-          Kontrol Model 3D:
+      {/* Fancy Instructions Card */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.5 }}
+        className="absolute top-4 left-4 text-sm bg-white/95 p-5 rounded-xl shadow-2xl space-y-3 backdrop-blur-sm border border-emerald-100"
+      >
+        <div className="font-bold text-emerald-600 border-b-2 border-emerald-100 pb-2 mb-3 text-base">
+          🎮 Kontrol Model 3D:
         </div>
-        <div className="flex items-center space-x-2 hover:bg-emerald-50 p-1 rounded transition-colors">
-          <span className="bg-emerald-100 p-1.5 rounded-lg shadow-sm">🖱️</span>
+        <div className="flex items-center space-x-3 hover:bg-emerald-50 p-2 rounded-lg transition-colors duration-200">
+          <span className="bg-emerald-100 p-2 rounded-lg shadow-sm min-w-[32px] text-center">
+            🖱️
+          </span>
           <span>Klik & Geser untuk Rotasi</span>
         </div>
-        <div className="flex items-center space-x-2 hover:bg-emerald-50 p-1 rounded transition-colors">
-          <span className="bg-emerald-100 p-1.5 rounded-lg shadow-sm">⚲</span>
+        <div className="flex items-center space-x-3 hover:bg-emerald-50 p-2 rounded-lg transition-colors duration-200">
+          <span className="bg-emerald-100 p-2 rounded-lg shadow-sm min-w-[32px] text-center">
+            ⚲
+          </span>
           <span>Scroll untuk Zoom In/Out</span>
         </div>
-        <div className="flex items-center space-x-2 hover:bg-emerald-50 p-1 rounded transition-colors">
-          <span className="bg-emerald-100 p-1.5 rounded-lg shadow-sm">👆</span>
+        <div className="flex items-center space-x-3 hover:bg-emerald-50 p-2 rounded-lg transition-colors duration-200">
+          <span className="bg-emerald-100 p-2 rounded-lg shadow-sm min-w-[32px] text-center">
+            👆
+          </span>
           <span>Klik Kanan & Geser untuk Pan</span>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Watermark dengan style yang lebih elegan */}
-      <div className="absolute bottom-4 right-4 text-sm bg-black/20 text-white px-4 py-2 rounded-full backdrop-blur-sm shadow-lg font-medium">
-        Model by HidroNutrient Team
-      </div>
+      {/* Fancy Watermark */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+        className="absolute bottom-4 right-4 text-sm bg-black/30 text-white px-5 py-2.5 rounded-full backdrop-blur-sm shadow-xl font-medium"
+      >
+        Model by HidroNutrient Team ✨
+      </motion.div>
     </motion.div>
   );
 }
