@@ -80,11 +80,8 @@ function randomTemperature() {
 function randomPH() {
   return Number((Math.random() * (7 - 5.5) + 5.5).toFixed(1));
 }
-function randomChange() {
-  return Number((Math.random() * 4 - 2).toFixed(1)); // -2% to +2%
-}
 
-// Generate some initial data for the chart
+// Generate initial data for the chart
 function generateInitialData() {
   const data = [];
   for (let i = 23; i >= 0; i--) {
@@ -99,7 +96,15 @@ function generateInitialData() {
   return data;
 }
 
-export default function WaterStats() {
+interface WaterStatsProps {
+  useDummyData?: boolean;
+  userId?: string;
+}
+
+export default function WaterStats({
+  useDummyData = true,
+  userId,
+}: WaterStatsProps) {
   const [updateInterval, setUpdateInterval] =
     useState<UpdateInterval>("second");
   const [isUpdating, setIsUpdating] = useState(true);
@@ -116,7 +121,7 @@ export default function WaterStats() {
 
   const [chartData, setChartData] = useState(generateInitialData());
 
-  const updateStats = () => {
+  const updateDummyStats = () => {
     const newTDS = randomTDS();
     const newDistance = randomDistance();
     const newTemp = randomTemperature();
@@ -132,20 +137,66 @@ export default function WaterStats() {
     setTemperature(newTemp);
     setPH(newPH);
 
-    // Update chart data
-    setChartData((prev) => {
-      const updated = [
-        ...prev.slice(1),
-        {
-          time: new Date().toLocaleTimeString(),
-          tds: newTDS,
-          distance: newDistance,
+    setChartData((prev) => [
+      ...prev.slice(1),
+      {
+        time: new Date().toLocaleTimeString(),
+        tds: newTDS,
+        distance: newDistance,
+        temperature: newTemp,
+        ph: newPH,
+      },
+    ]);
+  };
+
+  const updateRealStats = async () => {
+    if (!userId) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/sensor-data/${userId}/latest`
+      );
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        const {
           temperature: newTemp,
           ph: newPH,
-        },
-      ];
-      return updated;
-    });
+          distance: newDistance,
+          ppm: newTDS,
+        } = data.data;
+
+        setTDSChange(((newTDS - tds) / tds) * 100);
+        setDistanceChange(((newDistance - distance) / distance) * 100);
+        setTempChange(((newTemp - temperature) / temperature) * 100);
+        setPHChange(((newPH - ph) / ph) * 100);
+
+        setTDS(newTDS);
+        setDistance(newDistance);
+        setTemperature(newTemp);
+        setPH(newPH);
+
+        // Get historical data
+        const historyResponse = await fetch(
+          `http://localhost:5000/api/sensor-data/${userId}/history?limit=24`
+        );
+        const historyData = await historyResponse.json();
+
+        if (historyData.success && historyData.data) {
+          setChartData(
+            historyData.data.map((item: any) => ({
+              time: new Date(item.timestamp).toLocaleTimeString(),
+              tds: item.ppm,
+              distance: item.distance,
+              temperature: item.temperature,
+              ph: item.ph,
+            }))
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch sensor data:", error);
+    }
   };
 
   useEffect(() => {
@@ -156,7 +207,10 @@ export default function WaterStats() {
         (opt) => opt.value === updateInterval
       );
       if (selectedInterval) {
-        intervalId = window.setInterval(updateStats, selectedInterval.ms);
+        intervalId = window.setInterval(
+          useDummyData ? updateDummyStats : updateRealStats,
+          selectedInterval.ms
+        );
       }
     }
 
@@ -165,7 +219,16 @@ export default function WaterStats() {
         clearInterval(intervalId);
       }
     };
-  }, [updateInterval, isUpdating, tds, distance, temperature, ph]);
+  }, [
+    updateInterval,
+    isUpdating,
+    tds,
+    distance,
+    temperature,
+    ph,
+    useDummyData,
+    userId,
+  ]);
 
   const getUpdateText = () => {
     const intervalOption = intervalOptions.find(
@@ -309,6 +372,7 @@ export default function WaterStats() {
 
         <div className="mt-6 text-center">
           <p className="text-gray-500 text-sm">
+            {useDummyData ? "(Mode Demo) " : "(Mode Real) "}
             Update {getUpdateText()}.{!isUpdating && " (Update dihentikan)"}
           </p>
         </div>

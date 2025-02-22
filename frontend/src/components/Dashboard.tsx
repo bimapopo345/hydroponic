@@ -67,13 +67,17 @@ const Dashboard = () => {
   const [saveLoading, setSaveLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
+    const currentUserId = window.location.pathname.split("/").pop() || "";
+    setUserId(currentUserId);
+
     const fetchUserData = async () => {
       try {
-        const userId = window.location.pathname.split("/").pop();
+        if (!currentUserId) return;
         const response = await fetch(
-          `http://localhost:5000/dashboard/${userId}`
+          `http://localhost:5000/dashboard/${currentUserId}`
         );
         const data = await response.json();
         if (response.ok) {
@@ -519,7 +523,7 @@ const Dashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <WaterStats />
+          <WaterStats useDummyData={false} userId={userId} />
         </motion.div>
 
         <motion.div

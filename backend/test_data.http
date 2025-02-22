@@ -1,0 +1,35 @@
+# File ini berisi contoh request untuk testing API dengan Postman atau REST Client VSCode
+
+### Menambahkan data sensor (simulasi)
+POST http://localhost:5000/api/sensor-data/simulate
+Content-Type: application/json
+
+{
+    "userId": "67906a8703f043e82dc7e9a1",
+    "deviceId": "ESP32_01",
+    "count": 24
+}
+
+### Mengambil data sensor terbaru
+GET http://localhost:5000/api/sensor-data/67906a8703f043e82dc7e9a1/latest
+
+### Mengambil riwayat data sensor
+GET http://localhost:5000/api/sensor-data/67906a8703f043e82dc7e9a1/history?limit=24
+
+### Menambahkan data sensor manual
+POST http://localhost:5000/api/sensor-data
+Content-Type: application/json
+
+{
+    "userId": "67906a8703f043e82dc7e9a1",
+    "deviceId": "ESP32_01",
+    "temperature": 25.5,
+    "ph": 6.5,
+    "distance": 15.2,
+    "ppm": 750
+}
+
+### Mengambil statistik data sensor
+GET http://localhost:5000/api/sensor-data/67906a8703f043e82dc7e9a1/stats?period=24h
+
+# Note: Ganti userId di atas dengan ID user yang actual dari database

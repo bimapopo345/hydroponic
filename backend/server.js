@@ -8,6 +8,7 @@ import crypto from "crypto";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import User from "./models/User.js";
+import SensorData from "./models/SensorData.js";
 import sensorRoutes from "./routes/sensorRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -51,14 +52,6 @@ mongoose
   })
   .then(() => console.log("MongoDB connected to hidroponik database"))
   .catch((err) => console.log(err));
-
-// Generate random nutrient stats
-const generateNutrientStats = () => ({
-  tds: Number((Math.random() * (900 - 200) + 200).toFixed(1)),
-  ec: Number((Math.random() * (1500 - 500) + 500).toFixed(1)),
-  temperature: Number((Math.random() * (30 - 20) + 20).toFixed(1)),
-  ph: Number((Math.random() * (7 - 5.5) + 5.5).toFixed(1)),
-});
 
 // Send welcome email
 const sendWelcomeEmail = async (email, username) => {
@@ -117,11 +110,8 @@ app.post("/register", async (req, res) => {
       profile: {},
       dashboardData: {
         lastLogin: new Date(),
-        stats: generateNutrientStats(),
-        history: Array.from({ length: 24 }, (_, i) => ({
-          time: `${i}:00`,
-          ...generateNutrientStats(),
-        })),
+        stats: null,
+        history: [],
       },
     });
 
@@ -158,12 +148,37 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Update last login and generate new stats
+    // Update last login and get real stats from sensor data
     user.dashboardData.lastLogin = new Date();
-    user.dashboardData.stats = generateNutrientStats();
-    user.dashboardData.history = Array.from({ length: 24 }, (_, i) => ({
-      time: `${i}:00`,
-      ...generateNutrientStats(),
+
+    // Get latest sensor data
+    const latestSensorData = await SensorData.findOne({
+      userId: user._id,
+    }).sort({ timestamp: -1 });
+
+    // Get last 24 hours of history
+    const lastDayHistory = await SensorData.find({
+      userId: user._id,
+      timestamp: {
+        $gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      },
+    }).sort({ timestamp: 1 });
+
+    if (latestSensorData) {
+      user.dashboardData.stats = {
+        temperature: latestSensorData.temperature,
+        ph: latestSensorData.ph,
+        distance: latestSensorData.distance,
+        ppm: latestSensorData.ppm,
+      };
+    }
+
+    user.dashboardData.history = lastDayHistory.map((data) => ({
+      time: new Date(data.timestamp).toLocaleTimeString(),
+      temperature: data.temperature,
+      ph: data.ph,
+      distance: data.distance,
+      ppm: data.ppm,
     }));
 
     await user.save();
@@ -196,25 +211,43 @@ app.get("/dashboard/:userId", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Ensure profile and dashboardData exist
-    if (!user.dashboardData) {
-      user.dashboardData = {
-        lastLogin: new Date(),
-        stats: generateNutrientStats(),
-        history: Array.from({ length: 24 }, (_, i) => ({
-          time: `${i}:00`,
-          ...generateNutrientStats(),
-        })),
-      };
+    // Ensure profile exists
+    if (!user.profile) {
+      user.profile = {};
     }
 
-    // Generate new stats for a real-time feel
-    const newStats = generateNutrientStats();
-    user.dashboardData.stats = newStats;
-    user.dashboardData.history = [
-      ...user.dashboardData.history.slice(1),
-      { time: new Date().toLocaleTimeString(), ...newStats },
-    ];
+    // Get latest sensor data
+    const latestSensorData = await SensorData.findOne({ userId }).sort({
+      timestamp: -1,
+    });
+
+    // Get last 24 hours of history
+    const lastDayHistory = await SensorData.find({
+      userId,
+      timestamp: {
+        $gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      },
+    }).sort({ timestamp: 1 });
+
+    // Update dashboard data
+    user.dashboardData = {
+      lastLogin: new Date(),
+      stats: latestSensorData
+        ? {
+            temperature: latestSensorData.temperature,
+            ph: latestSensorData.ph,
+            distance: latestSensorData.distance,
+            ppm: latestSensorData.ppm,
+          }
+        : null,
+      history: lastDayHistory.map((data) => ({
+        time: new Date(data.timestamp).toLocaleTimeString(),
+        temperature: data.temperature,
+        ph: data.ph,
+        distance: data.distance,
+        ppm: data.ppm,
+      })),
+    };
 
     await user.save();
     console.log("Dashboard data updated for user:", userId);
