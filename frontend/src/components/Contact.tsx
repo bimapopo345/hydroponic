@@ -70,35 +70,35 @@ export default function Contact() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Get In Touch
+            Hubungi Kami
           </h2>
           <p className="text-xl text-gray-600">
             {selectedPlan
-              ? `Complete your ${selectedPlan} plan inquiry`
-              : "Learn more about HidroNutrient solutions"}
+              ? `Lengkapi permintaan paket ${selectedPlan} Anda`
+              : "Pelajari lebih lanjut tentang solusi HidroNutrient"}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <Mail className="w-6 h-6 text-blue-600" />
+              <Mail className="w-6 h-6 text-emerald-600" />
               <div>
-                <h3 className="font-semibold">Email Us</h3>
+                <h3 className="font-semibold">Email</h3>
                 <p className="text-gray-600">info@hidro-nutrient.tech</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Phone className="w-6 h-6 text-blue-600" />
+              <Phone className="w-6 h-6 text-emerald-600" />
               <div>
-                <h3 className="font-semibold">Call Us</h3>
+                <h3 className="font-semibold">Telepon</h3>
                 <p className="text-gray-600">+62 123 456 7890</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <MapPin className="w-6 h-6 text-blue-600" />
+              <MapPin className="w-6 h-6 text-emerald-600" />
               <div>
-                <h3 className="font-semibold">Visit Us</h3>
+                <h3 className="font-semibold">Alamat</h3>
                 <p className="text-gray-600">Jakarta, Indonesia</p>
               </div>
             </div>
@@ -110,16 +110,14 @@ export default function Contact() {
                 className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
                 role="alert"
               >
-                <span className="block sm:inline">
-                  Message sent successfully!
-                </span>
+                <span className="block sm:inline">Pesan berhasil dikirim!</span>
               </div>
             )}
 
             {selectedPlan && (
-              <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded relative">
+              <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded relative">
                 <span className="block sm:inline">
-                  Selected plan: {selectedPlan}
+                  Paket yang dipilih: {selectedPlan}
                 </span>
               </div>
             )}
@@ -129,18 +127,18 @@ export default function Contact() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Your Name"
+              placeholder="Nama Anda"
               required
-              className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              className="w-full p-3 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
             />
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Your Email"
+              placeholder="Email Anda"
               required
-              className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              className="w-full p-3 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
             />
             <textarea
               name="message"
@@ -148,18 +146,18 @@ export default function Contact() {
               onChange={handleChange}
               placeholder={
                 selectedPlan
-                  ? "Tell us about your hydroponic system and requirements..."
-                  : "Your Message"
+                  ? "Ceritakan tentang sistem hidroponik dan kebutuhan Anda..."
+                  : "Pesan Anda"
               }
               required
               rows={4}
-              className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              className="w-full p-3 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
             ></textarea>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              className="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
             >
-              {selectedPlan ? "Complete Inquiry" : "Send Message"}
+              {selectedPlan ? "Lengkapi Permintaan" : "Kirim Pesan"}
             </button>
           </form>
         </div>

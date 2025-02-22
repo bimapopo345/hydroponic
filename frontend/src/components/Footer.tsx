@@ -11,32 +11,32 @@ export default function Footer() {
               <span className="text-xl font-bold">HidroNutrient</span>
             </div>
             <p className="text-gray-400">
-              Advancing hydroponics with modern IoT monitoring
+              Memajukan hidroponik dengan monitoring IoT modern
             </p>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="#" className="hover:text-emerald-400 transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="#" className="hover:text-emerald-400 transition-colors">
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="#" className="hover:text-emerald-400 transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="#" className="hover:text-emerald-400 transition-colors">
                 <Linkedin className="w-5 h-5" />
               </a>
             </div>
           </div>
           <div>
-            <h3 className="font-semibold mb-4">Quick Links</h3>
+            <h3 className="font-semibold mb-4">Menu Utama</h3>
             <ul className="space-y-2">
               <li>
                 <a
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Home
+                  Beranda
                 </a>
               </li>
               <li>
@@ -44,7 +44,7 @@ export default function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  About
+                  Tentang Kami
                 </a>
               </li>
               <li>
@@ -52,7 +52,7 @@ export default function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Features
+                  Fitur
                 </a>
               </li>
               <li>
@@ -60,28 +60,20 @@ export default function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Pricing
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Contact
+                  Kontak
                 </a>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold mb-4">Resources</h3>
+            <h3 className="font-semibold mb-4">Sumber Daya</h3>
             <ul className="space-y-2">
               <li>
                 <a
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Documentation
+                  Dokumentasi
                 </a>
               </li>
               <li>
@@ -89,7 +81,7 @@ export default function Footer() {
                   href="#"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Support
+                  Bantuan
                 </a>
               </li>
               <li>
@@ -111,7 +103,7 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold mb-4">Contact</h3>
+            <h3 className="font-semibold mb-4">Kontak</h3>
             <ul className="space-y-2">
               <li className="text-gray-400">Jakarta, Indonesia</li>
               <li className="text-gray-400">+62 123 456 7890</li>
@@ -120,7 +112,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-          <p>&copy; 2025 HidroNutrient. All rights reserved.</p>
+          <p>&copy; 2025 HidroNutrient. Hak Cipta Dilindungi.</p>
         </div>
       </div>
     </footer>

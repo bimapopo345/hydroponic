@@ -7,6 +7,7 @@ import Benefits from "./components/Benefits";
 import WaterStats from "./components/WaterStats";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import Model3D from "./components/Model3D";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
@@ -21,6 +22,16 @@ const HomePage = () => {
         <Hero />
         <Features />
         <Benefits />
+        <div className="py-20 bg-gradient-to-br from-green-50 to-emerald-50">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-4xl font-bold text-gray-900 mb-8 text-center">
+              Model Alat Hidroponik
+            </h2>
+            <div className="h-[600px]">
+              <Model3D />
+            </div>
+          </div>
+        </div>
         <WaterStats />
         <Contact />
       </main>

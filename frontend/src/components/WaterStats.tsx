@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Droplets, Thermometer, Ruler, Flower2, Clock } from "lucide-react";
-import Model3D from "./Model3D";
 import {
   LineChart,
   Line,
@@ -261,12 +260,12 @@ export default function WaterStats() {
           />
         </div>
 
-        <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="mt-12">
           <div className="bg-white p-6 rounded-xl shadow-lg">
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
               Data Historis
             </h3>
-            <div className="h-[400px]">
+            <div className="h-[500px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -305,12 +304,6 @@ export default function WaterStats() {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              Model Alat Hidroponik
-            </h3>
-            <Model3D />
           </div>
         </div>
 
