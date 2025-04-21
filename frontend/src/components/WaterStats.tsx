@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Droplets, Thermometer, Ruler, Flower2, Clock } from "lucide-react";
+import {
+  Droplets,
+  Thermometer,
+  Ruler,
+  Flower2,
+  Clock,
+  AlertTriangle,
+} from "lucide-react";
 import {
   LineChart,
   Line,
@@ -31,6 +38,9 @@ interface StatCardProps {
 }
 
 function StatCard({ title, value, unit, icon, color, change }: StatCardProps) {
+  const numericValue = parseFloat(value);
+  const showAlert = title === "Jarak Air" && numericValue <= 5;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -63,6 +73,14 @@ function StatCard({ title, value, unit, icon, color, change }: StatCardProps) {
         </span>
         <span className="text-gray-500 text-sm ml-2">vs update terakhir</span>
       </div>
+      {showAlert && (
+        <div className="mt-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center">
+          <AlertTriangle className="w-5 h-5 mr-2" />
+          <span className="text-sm font-medium">
+            Peringatan: Level Air Sangat Rendah!
+          </span>
+        </div>
+      )}
     </motion.div>
   );
 }
