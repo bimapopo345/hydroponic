@@ -12,6 +12,7 @@ import {
   Sprout,
 } from "lucide-react";
 import WaterStats from "./WaterStats";
+import PlantPresets from "./PlantPresets";
 
 interface Profile {
   fullName: string;
@@ -524,6 +525,15 @@ const Dashboard = () => {
           transition={{ delay: 0.2 }}
         >
           <WaterStats useDummyData={false} userId={userId} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mt-8"
+        >
+          <PlantPresets />
         </motion.div>
 
         <motion.div

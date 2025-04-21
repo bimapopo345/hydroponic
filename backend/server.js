@@ -10,6 +10,7 @@ import { dirname } from "path";
 import User from "./models/User.js";
 import SensorData from "./models/SensorData.js";
 import sensorRoutes from "./routes/sensorRoutes.js";
+import relayRoutes from "./routes/relayRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,16 +41,20 @@ app.use(
 );
 app.use(bodyParser.json());
 
-// Sensor routes
+// Routes
 app.use("/api", sensorRoutes);
+app.use("/api", relayRoutes);
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb+srv://bimapopo81:Bima1234@sinau.q23pt.mongodb.net/", {
-    dbName: "hidroponik", // Changed from 'air' to 'hidroponik'
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb+srv://bimapopo81:Bima1234@sinau.q23pt.mongodb.net/hidroponik",
+    {
+      dbName: "hidroponik", // Changed from 'air' to 'hidroponik'
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => console.log("MongoDB connected to hidroponik database"))
   .catch((err) => console.log(err));
 
