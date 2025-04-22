@@ -20,7 +20,7 @@ const sensorDataSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 0,
-    max: 14,
+    max: 50,
   },
   distance: {
     type: Number,
