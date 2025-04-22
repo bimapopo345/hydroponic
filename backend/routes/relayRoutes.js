@@ -37,11 +37,15 @@ relayControlSchema.index({ deviceId: 1, timestamp: -1 });
 
 const RelayControl = mongoose.model("RelayControl", relayControlSchema);
 
-// POST: Set PPM threshold baru
+// POST: Set PPM threshold baru (dengan delete data lama)
 router.post("/relay-control", async (req, res) => {
   try {
     const { deviceId, plantType, weekNumber, ppmThreshold } = req.body;
 
+    // Hapus data lama dengan deviceId yang sama
+    await RelayControl.deleteMany({ deviceId });
+
+    // Buat data baru
     const relayControl = new RelayControl({
       deviceId,
       plantType,
