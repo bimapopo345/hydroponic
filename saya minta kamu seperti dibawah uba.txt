@@ -1,0 +1,299 @@
+saya minta kamu seperti dibawah ubah code esp32 dibawah ini nangkap dari api, tapi jangan banyak ubah di lcd dll, intinya bagian tresholdnya itu
+
+CODE EPPROM YANG ADA JANGAN DIILANGIN YG DIBAWAH
+
+Timer mulai saat threshold = 800
+PPM ≥ 800: Relay OFF tapi timer tetap jalan
+PPM < 800: Relay ON selama timer masih aktif
+Setelah timer habis: Relay permanen OFF
+
+Timeline:
+Deteksi threshold 800 -> Timer mulai
+PPM = 920 -> Relay OFF, timer jalan
+PPM = 750 -> Relay ON, timer jalan
+Timer habis -> Relay OFF permanen
+Recovery:
+Set threshold < 800
+Reset semua flag
+Kembali ke mode normal
+
+duh itu udah 1 jam tapi ga mati relay nya, dan juga padahal ppm saya diatas 900 kenapa masih jalan sih ? walaupun api treshold nya 800, tapi kan kalau udah 900 ya ga hidup relay tapi timer jalan karena treshold!!
+
+ Logika kontrolnya terbalik. Saat PPM di atas threshold seharusnya relay mati dan timer tetap jalan. Mari saya perbaiki kodenya.
+
+duh codingkan yang lengkap lah di md nya
+
+duh codingkan yang lengkap lah di md nya
+
+>> ya ccodingan esp32 dibawha benar tapi untuk eeprom ppm gitu jangan dihapus lah codenya, jadi kalibrasi ulang kamu nih gimana
+
+>> ya ccodingan esp32 dibawha benar tapi untuk eeprom ppm gitu jangan dihapus lah codenya, jadi kalibrasi ulang kamu nih gimana
+
+>> ya ccodingan esp32 dibawha benar tapi untuk eeprom ppm gitu jangan dihapus lah codenya, jadi kalibrasi ulang kamu nih gimana
+
+Tambahan mode panen dengan timer
+Tetap mempertahankan fungsi EEPROM untuk kalibrasi
+Tidak mengubah LCD dan fungsi dasar lainnya
+
+Ah ya saya mengerti. Saya akan membuat versi baru yang hanya mengubah bagian threshold dan timer control, tanpa mengubah LCD dan bagian lainnya dari kode asli.
+Ah ya saya mengerti. Saya akan membuat versi baru yang hanya mengubah bagian threshold dan timer control, tanpa mengubah LCD dan bagian lainnya dari kode asli.
+Ah ya saya mengerti. Saya akan membuat versi baru yang hanya mengubah bagian threshold dan timer control, tanpa mengubah LCD dan bagian lainnya dari kode asli.
+Ah ya saya mengerti. Saya akan membuat versi baru yang hanya mengubah bagian threshold dan timer control, tanpa mengubah LCD dan bagian lainnya dari kode asli.
+
+
+nah jadi sekarang buatkan lagi di md yang baru codingan esp32, nah kan itu dia nangkap treshold 100,400,800 kan dari api ? nah gimana caranya codingan ESP32 nya kamu buat baru di md, jadi gimana supaya esp32 nya, semisal yg ditangkap 800, nah aktifin relay nya itu cuman 1 jam dari nangkap 800 pertama kali? setelahnya relay mati terus
+
+bukan relay on selama timer berjalan, karena 800 itu kan mendekati masa panen, nah semisal si petani pencet 800 di web, alhasil di db api 800, terus api nangkap 800, nah semisal ppm kuramng dair 800 dia aktifin pompa gitu aja, bukan aktif terus pompa nya, kan ada trashold nya, intinya pompa aktif pas ampil di db api nya 800 itu selama 1 jam aja, lewat itu jangan aktifin lagi walaupun dibawah 800 karena itu udah masa panen gitu sih, ibarat kaya off gitu
+
+duh itu jangan tunggu reset esp32 kan nanti ditanam dibox gimana resetnya.... semisal si petani ganti lagi jadi 100 atau berapa gitu selain 800, baru deh bisa lagi treshold ppm nnya
+
+dan juga buatkan code di .md nya yang lengkap lah bro
+
+kalau dari code itu walaupun nanti ppm 802 tapi timer jalan, relay mati kan? bukan hidup terus? tapi timer masih ada semisal dibawha 800 baru hidup lagi relay gitu kan?
+
+
+code esp32 ini jadikan ke readme md Baru lagi (soalnya ini Fix_1)
+
+#include <EEPROM.h>
+#include "GravityTDS.h"
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include <LiquidCrystal_I2C.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h> // Untuk parsing JSON
+
+#define TdsSensorPin 4
+#define ONE_WIRE_BUS 6
+#define SensorPin 7
+#define trigPin 5
+#define echoPin 18
+#define relayPin1 13
+#define relayPin2 12
+
+// WiFi credentials
+const char* ssid = "Onlydems";
+const char* password = "12345678";
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+GravityTDS gravityTds;
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+float temperature = 25, tdsValue = 0;
+float Celsius = 0;
+float iteration = 0;
+float voltage, pHValue;
+float slope = -5.02;
+float offset = 19.86;
+long duration;
+float distanceCm;
+float distanceInch;
+float capacityPercent;
+float temperatureCorrection = 0.39;
+
+// Variabel untuk threshold
+int ppmThreshold = 100;  // Default value
+unsigned long lastThresholdCheck = 0;
+const unsigned long CHECK_INTERVAL = 5000; // Check setiap 30 detik
+
+void setup() {
+  EEPROM.begin(512);
+  Serial.begin(115200);
+
+  // Inisialisasi LCD
+  Wire.begin(8, 9);
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Inisialisasi...");
+
+  // Koneksi WiFi
+  connectToWiFi();
+
+  // Inisialisasi sensor
+  gravityTds.setPin(TdsSensorPin);
+  gravityTds.setAref(3.3);
+  gravityTds.setAdcRange(4096);
+  gravityTds.begin();
+  sensors.begin();
+  pinMode(SensorPin, INPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(relayPin1, OUTPUT);
+  pinMode(relayPin2, OUTPUT);
+  digitalWrite(relayPin1, LOW);
+  digitalWrite(relayPin2, LOW);
+
+  // Get initial threshold
+  getThresholdFromAPI();
+}
+
+void connectToWiFi() {
+  WiFi.disconnect(true);
+  delay(1000);
+  WiFi.begin(ssid, password);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Connecting WiFi");
+  lcd.setCursor(0, 1);
+  lcd.print(ssid);
+
+  Serial.println("Mencoba menghubungkan ke WiFi...");
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+    lcd.print(".");
+    delay(500);
+
+    static uint8_t dotCount = 0;
+    dotCount++;
+    if (dotCount > 16) {
+      lcd.setCursor(0, 1);
+      lcd.print("                ");
+      lcd.setCursor(0, 1);
+      lcd.print(ssid);
+      dotCount = 0;
+    }
+  }
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("WiFi Connected!");
+  lcd.setCursor(0, 1);
+  lcd.print("IP:");
+  lcd.print(WiFi.localIP().toString());
+  Serial.println("\nTerhubung ke WiFi!");
+  Serial.print("Alamat IP: ");
+  Serial.println(WiFi.localIP());
+}
+
+void getThresholdFromAPI() {
+  if (WiFi.status() != WL_CONNECTED) return;
+
+  HTTPClient http;
+  http.begin(" https://bcbf-103-224-73-240.ngrok-free.app/api/relay-control/ESP32_01");
+  int httpCode = http.GET();
+
+  if (httpCode > 0) {
+    String payload = http.getString();
+    DynamicJsonDocument doc(1024);
+    DeserializationError error = deserializeJson(doc, payload);
+
+    if (!error && doc["success"] && doc["data"]["ppmThreshold"]) {
+      int newThreshold = doc["data"]["ppmThreshold"];
+      if (newThreshold != ppmThreshold) {
+        ppmThreshold = newThreshold;
+        Serial.printf("PPM threshold diupdate: %d\n", ppmThreshold);
+      }
+    }
+  }
+  http.end();
+}
+
+void loop() {
+  // Check threshold setiap interval
+  if (millis() - lastThresholdCheck >= CHECK_INTERVAL) {
+    getThresholdFromAPI();
+    lastThresholdCheck = millis();
+  }
+
+  // Jika WiFi terputus, coba sambung kembali
+  if (WiFi.status() != WL_CONNECTED) {
+    connectToWiFi();
+    return;
+  }
+
+  // Baca semua sensor
+  sensors.requestTemperatures();
+  Celsius = sensors.getTempCByIndex(0);
+  float correctedTemperature = Celsius + temperatureCorrection;
+  temperature = correctedTemperature;
+
+  gravityTds.setTemperature(temperature);
+  gravityTds.update();
+  tdsValue = gravityTds.getTdsValue();
+
+  // Kontrol relay dengan threshold dari API
+  if (tdsValue < ppmThreshold) {
+    digitalWrite(relayPin1, HIGH);
+    digitalWrite(relayPin2, HIGH);
+    Serial.printf("Relay ON - PPM (%0.1f) dibawah threshold (%d)\n", tdsValue, ppmThreshold);
+  } else {
+    digitalWrite(relayPin1, LOW);
+    digitalWrite(relayPin2, LOW);
+    Serial.printf("Relay OFF - PPM (%0.1f) mencukupi threshold (%d)\n", tdsValue, ppmThreshold);
+  }
+
+  // Baca pH
+  float totalVoltage = 0;
+  for (int i = 0; i < 7; i++) {
+    int sensorValue = analogRead(SensorPin);
+    voltage = sensorValue * (3.3 / 4095.0);
+    totalVoltage += voltage;
+    delay(100);
+  }
+  voltage = totalVoltage / 7;
+  pHValue = slope * voltage + offset;
+
+  // Baca jarak ultrasonik
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distanceCm = duration * 0.034 / 2;
+  distanceInch = distanceCm * 0.393701;
+  capacityPercent = constrain(100 - (distanceCm / 32.1) * 100, 0, 100);
+
+  // Update LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("ppm=");
+  lcd.print(tdsValue, 0);
+  lcd.setCursor(9, 0);
+  lcd.print("pH=");
+  lcd.print(pHValue, 2);
+  lcd.setCursor(0, 1);
+  lcd.print("tmp=");
+  lcd.print(correctedTemperature, 1);
+  lcd.setCursor(9, 1);
+  lcd.print("cap=");
+  lcd.print(capacityPercent, 1);
+
+  // Kirim data ke API
+  sendDataToAPI();
+
+  iteration++;
+  delay(3000);
+}
+
+void sendDataToAPI() {
+  if (WiFi.status() != WL_CONNECTED) return;
+
+  String jsonData = "{\"userId\": \"67906a8703f043e82dc7e9a1\",";
+  jsonData += "\"deviceId\": \"ESP32_01\",";
+  jsonData += "\"temperature\": " + String(temperature) + ",";
+  jsonData += "\"ph\": " + String(pHValue, 2) + ",";
+  jsonData += "\"distance\": " + String(distanceCm) + ",";
+  jsonData += "\"ppm\": " + String(tdsValue, 0) + "}";
+
+  HTTPClient http;
+  http.begin(" https://bcbf-103-224-73-240.ngrok-free.app/api/sensor-data");
+  http.addHeader("Content-Type", "application/json");
+
+  int httpResponseCode = http.POST(jsonData);
+
+  if (httpResponseCode > 0) {
+    String response = http.getString();
+    Serial.println("Data terkirim!");
+  } else {
+    Serial.print("Error: ");
+    Serial.println(httpResponseCode);
+  }
+  http.end();
+}
