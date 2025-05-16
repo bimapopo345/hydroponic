@@ -6,15 +6,18 @@ const requestLogs = [];
 
 // Middleware to log requests
 export const logMiddleware = (req, res, next) => {
-  const log = {
-    timestamp: new Date().toLocaleString("id-ID"),
-    method: req.method,
-    path: req.path,
-    status: res.statusCode || "pending",
-  };
+  // Skip logging for /logweb path
+  if (req.path !== "/logweb") {
+    const log = {
+      timestamp: new Date().toLocaleString("id-ID"),
+      method: req.method,
+      path: req.path,
+      status: res.statusCode || "pending",
+    };
 
-  requestLogs.unshift(log);
-  if (requestLogs.length > 100) requestLogs.pop();
+    requestLogs.unshift(log);
+    if (requestLogs.length > 100) requestLogs.pop();
+  }
   next();
 };
 
