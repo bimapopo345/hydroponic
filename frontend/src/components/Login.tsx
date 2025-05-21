@@ -14,17 +14,24 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: usernameOrEmail, password }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: usernameOrEmail, password }),
+        }
+      );
       const data = await response.json();
 
       if (response.ok) {
-        window.location.href = `/dashboard/${data.user._id}`;
+        console.log("Login successful:", data);
+        // Using proper window.location.href to ensure full page reload
+        const dashboardUrl = `/dashboard/${data.user._id}`;
+        console.log("Redirecting to:", dashboardUrl);
+        window.location.href = dashboardUrl;
       } else {
         setError(data.error || "Login failed");
       }

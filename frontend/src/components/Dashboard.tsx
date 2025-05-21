@@ -76,12 +76,22 @@ const Dashboard = () => {
 
     const fetchUserData = async () => {
       try {
-        if (!currentUserId) return;
+        if (!currentUserId) {
+          console.error("No userId found in URL");
+          return;
+        }
+        console.log("Fetching data for userId:", currentUserId);
+        console.log(
+          "Making request to:",
+          `${import.meta.env.VITE_BACKEND_URL}/api/dashboard/${currentUserId}`
+        );
         const response = await fetch(
-          `http://localhost:5000/dashboard/${currentUserId}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/dashboard/${currentUserId}`
         );
         const data = await response.json();
+        console.log("Response status:", response.status);
         if (response.ok) {
+          console.log("Dashboard data received:", data);
           setUserData(data);
           setEditedProfile(data.profile || defaultProfile);
         } else {
@@ -155,13 +165,16 @@ const Dashboard = () => {
 
     try {
       const userId = window.location.pathname.split("/").pop();
-      const response = await fetch(`http://localhost:5000/profile/${userId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editedProfile),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/profile/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editedProfile),
+        }
+      );
 
       const data = await response.json();
 

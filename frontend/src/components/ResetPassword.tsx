@@ -23,13 +23,16 @@ const ResetPassword = () => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token, newPassword }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/reset-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token, newPassword }),
+        }
+      );
 
       const data = await response.json();
 
