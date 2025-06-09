@@ -542,14 +542,17 @@ const Dashboard = () => {
           <WaterStats useDummyData={false} userId={userId} />
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mt-8"
-        >
-          <PlantPresets />
-        </motion.div>
+        {/* PPM Control hanya muncul untuk Bima Prawang Saputra */}
+        {userData.username === "Bima Prawang Saputra" && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-8"
+          >
+            <PlantPresets />
+          </motion.div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
