@@ -311,8 +311,8 @@ export default function WaterStats({
             title="PPM"
             value={tds.toString()}
             unit="ppm"
-            icon={<Droplets className="w-6 h-6 text-green-600" />}
-            color="border-l-green-600"
+            icon={<Droplets className="w-6 h-6 text-indigo-500" />}
+            color="border-l-indigo-500"
             change={tdsChange}
           />
           <StatCard
@@ -327,8 +327,8 @@ export default function WaterStats({
             title="Suhu"
             value={temperature.toString()}
             unit="°C"
-            icon={<Thermometer className="w-6 h-6 text-emerald-600" />}
-            color="border-l-emerald-600"
+            icon={<Thermometer className="w-6 h-6 text-red-500" />}
+            color="border-l-red-500"
             change={tempChange}
           />
           <StatCard

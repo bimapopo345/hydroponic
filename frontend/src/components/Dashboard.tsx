@@ -12,7 +12,7 @@ import {
   Sprout,
 } from "lucide-react";
 import WaterStats from "./WaterStats";
-import PlantPresets from "./PlantPresets";
+import AdminPPMControl from "./AdminPPMControl";
 
 interface Profile {
   fullName: string;
@@ -69,6 +69,7 @@ const Dashboard = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState<string>("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const currentUserId = window.location.pathname.split("/").pop() || "";
@@ -93,6 +94,7 @@ const Dashboard = () => {
         if (response.ok) {
           console.log("Dashboard data received:", data);
           setUserData(data);
+          setIsAdmin(data.username === "Bima Prawang Saputra");
           setEditedProfile(data.profile || defaultProfile);
         } else {
           setError(data.error || "Failed to load user data");
@@ -546,7 +548,7 @@ const Dashboard = () => {
           transition={{ delay: 0.3 }}
           className="mt-8"
         >
-          <PlantPresets />
+          <AdminPPMControl isAdmin={isAdmin} />
         </motion.div>
 
         <motion.div

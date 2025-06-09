@@ -38,20 +38,54 @@ router.get("/sensor-data/:userId/latest", async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const latestData = await SensorData.findOne({ userId })
+    // Jika user adalah Bima Prawang Saputra, kembalikan datanya
+    if (userId === "67906a8703f043e82dc7e9a1") {
+      const latestData = await SensorData.findOne({ userId })
+        .sort({ timestamp: -1 })
+        .select("-__v");
+
+      if (!latestData) {
+        return res.status(404).json({
+          success: false,
+          error: "Data sensor tidak ditemukan",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: latestData,
+      });
+    }
+
+    // Untuk user lain, kembalikan data Bima Prawang Saputra
+    const adminLatestData = await SensorData.findOne({
+      userId: "67906a8703f043e82dc7e9a1",
+    })
       .sort({ timestamp: -1 })
       .select("-__v");
 
-    if (!latestData) {
-      return res.status(404).json({
-        success: false,
-        error: "Data sensor tidak ditemukan",
+    if (!adminLatestData) {
+      // Jika data admin tidak ada, coba ambil data user sendiri
+      const userLatestData = await SensorData.findOne({ userId })
+        .sort({ timestamp: -1 })
+        .select("-__v");
+
+      if (!userLatestData) {
+        return res.status(404).json({
+          success: false,
+          error: "Data sensor tidak ditemukan",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: userLatestData,
       });
     }
 
     res.status(200).json({
       success: true,
-      data: latestData,
+      data: adminLatestData,
     });
   } catch (error) {
     console.error("Error fetching latest sensor data:", error);
@@ -68,24 +102,42 @@ router.get("/sensor-data/:userId/history", async (req, res) => {
     const { userId } = req.params;
     const { from, to, limit = 100 } = req.query;
 
-    const query = { userId };
-
-    // Filter berdasarkan rentang waktu jika ada
-    if (from || to) {
-      query.timestamp = {};
-      if (from) query.timestamp.$gte = new Date(from);
-      if (to) query.timestamp.$lte = new Date(to);
-    }
-
-    const history = await SensorData.find(query)
+    // Cari user Bima Prawang Saputra
+    const adminData = await SensorData.find({
+      userId: "67906a8703f043e82dc7e9a1",
+    })
       .sort({ timestamp: -1 })
       .limit(Number(limit))
       .select("-__v");
 
-    res.status(200).json({
-      success: true,
-      data: history,
-    });
+    // Jika ini adalah user Bima Prawang Saputra atau data admin tidak ditemukan,
+    // kembalikan data sesuai userId yang diminta
+    if (userId === "67906a8703f043e82dc7e9a1" || adminData.length === 0) {
+      const query = { userId };
+
+      // Filter berdasarkan rentang waktu jika ada
+      if (from || to) {
+        query.timestamp = {};
+        if (from) query.timestamp.$gte = new Date(from);
+        if (to) query.timestamp.$lte = new Date(to);
+      }
+
+      const history = await SensorData.find(query)
+        .sort({ timestamp: -1 })
+        .limit(Number(limit))
+        .select("-__v");
+
+      res.status(200).json({
+        success: true,
+        data: history,
+      });
+    } else {
+      // Untuk user lain, kembalikan data Bima Prawang Saputra
+      res.status(200).json({
+        success: true,
+        data: adminData,
+      });
+    }
   } catch (error) {
     console.error("Error fetching sensor history:", error);
     res.status(500).json({
