@@ -6,6 +6,7 @@ const landingPageNavigation = [
   { name: "Beranda", href: "#home" },
   { name: "Fitur", href: "#features" },
   { name: "Keunggulan", href: "#benefits" },
+  { name: "Model 3D", href: "#model3d" },
   { name: "Statistik", href: "#water-stats" },
   { name: "Kontak", href: "#contact" },
 ];

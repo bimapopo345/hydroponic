@@ -32,6 +32,7 @@ export default function Model3D() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      id="model3d"
       className="relative w-full h-screen bg-gradient-to-b from-emerald-50 to-white rounded-xl shadow-lg overflow-hidden"
     >
       <Suspense fallback={<LoadingSpinner />}>
