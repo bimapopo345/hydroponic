@@ -269,7 +269,7 @@ export default function WaterStats({
       className="py-20 bg-gradient-to-br from-green-50 to-emerald-50"
     >
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 mt-24">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             Dashboard Monitoring Nutrisi
           </h2>
