@@ -14,6 +14,7 @@ import relayRoutes from "./routes/relayRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import { logRoutes, logMiddleware } from "./routes/logRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -52,6 +53,7 @@ app.use("/api", sensorRoutes);
 app.use("/api", relayRoutes);
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
+app.use("/api", adminRoutes); // Admin routes
 app.use("/logweb", logRoutes); // Add new log web route
 
 // Connect to MongoDB

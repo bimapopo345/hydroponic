@@ -12,7 +12,7 @@ import {
   Sprout,
 } from "lucide-react";
 import WaterStats from "./WaterStats";
-import AdminPPMControl from "./AdminPPMControl";
+import PlantPresets from "./PlantPresets";
 
 interface Profile {
   fullName: string;
@@ -548,7 +548,7 @@ const Dashboard = () => {
           transition={{ delay: 0.3 }}
           className="mt-8"
         >
-          <AdminPPMControl isAdmin={isAdmin} />
+          <PlantPresets />
         </motion.div>
 
         <motion.div

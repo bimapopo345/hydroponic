@@ -53,6 +53,7 @@ const AdminPPMControl: React.FC<AdminPPMControlProps> = ({ isAdmin }) => {
             plantType: selectedPlant,
             weekNumber: selectedWeek,
             ppmThreshold: PPM_VALUES[selectedPlant][selectedWeek - 1],
+            username: "Bima Prawang Saputra", // Add username for admin check
           }),
         }
       );
